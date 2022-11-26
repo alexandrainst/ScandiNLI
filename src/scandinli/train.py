@@ -52,7 +52,7 @@ def train(config: DictConfig) -> None:
     tokenized_dataset = dataset.map(
         partial(tokenize_function, tokenizer=tokenizer),
         batched=True,
-        remove_columns=dataset.column_names,
+        remove_columns=dataset["train"].column_names,
     )
 
     # Define the data collator
