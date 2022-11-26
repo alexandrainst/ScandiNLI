@@ -4,7 +4,7 @@ defaults:
 seed: 4242
 input_model_id: NbAiLab/nb-bert-large
 output_model_id: saattrupdan/nbailab-large-nli-scandi
-batch_size: 16
+batch_size: 32
 patience: 5
 learning_rate: 2e-5
 max_steps: 10_000
