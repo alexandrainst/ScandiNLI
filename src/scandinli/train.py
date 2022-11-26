@@ -139,7 +139,7 @@ def tokenize_function(
         examples["premise"],
         examples["hypothesis"],
         padding=False,
-        truncation=True,
+        truncation="only_first",
     )
 
 
