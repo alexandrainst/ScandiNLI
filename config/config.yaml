@@ -1,0 +1,207 @@
+defaults:
+  - _self_
+
+seed: 4242
+input_model_id: NbAiLab/nb-bert-large
+output_model_id: saattrupdan/nbailab-large-nli-scandi
+batch_size: 16
+patience: 5
+learning_rate: 2e-5
+max_steps: 10_000
+warmup_ratio: 0.01
+logging_steps: 30
+eval_steps: 30
+save_steps: 30
+save_total_limit: 1
+
+dirs:
+  data: data
+  raw: raw
+  processed: processed
+  final: final
+  models: models
+
+train_datasets:
+  da:
+    - id: strombergnlp/danfever
+      subset:
+      split: train
+      premise_column: evidence_extract
+      hypothesis_column: claim
+      label_column: label
+      label_names:
+        contradiction: Refuted
+        entailment: Supported
+        neutral: NotEnoughInfo
+      use_subset:
+        start: 0
+        end: 5000
+
+    - id: KBLab/overlim
+      subset: mnli_da
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: KBLab/overlim
+      subset: cb_da
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: KBLab/overlim
+      subset: wnli_da
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+  sv:
+    - id: KBLab/overlim
+      subset: mnli_sv
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: KBLab/overlim
+      subset: cb_sv
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: KBLab/overlim
+      subset: wnli_sv
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: MoritzLaurer/multilingual-NLI-26lang-2mil7
+      subset:
+      split: sv_fever
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: MoritzLaurer/multilingual-NLI-26lang-2mil7
+      subset:
+      split: sv_anli
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+  nb:
+    - id: KBLab/overlim
+      subset: mnli_nb
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: KBLab/overlim
+      subset: cb_nb
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+    - id: KBLab/overlim
+      subset: wnli_nb
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+      use_subset:
+
+validation_dataset:
+  id: strombergnlp/danfever
+  subset:
+  split: train
+  premise_column: evidence_extract
+  hypothesis_column: claim
+  label_column: label
+  label_names:
+    contradiction: Refuted
+    entailment: Supported
+    neutral: NotEnoughInfo
+  use_subset:
+    start: 5000
+    end: 5407
+
+test_dataset:
+  id: strombergnlp/danfever
+  subset:
+  split: train
+  premise_column: evidence_extract
+  hypothesis_column: claim
+  label_column: label
+  label_names:
+    contradiction: Refuted
+    entailment: Supported
+    neutral: NotEnoughInfo
+  use_subset:
+    start: 5407
+    end: 6407
+
+dataset_proportions:
+  da: 0.3334
+  sv: 0.3333
+  nb: 0.3333
