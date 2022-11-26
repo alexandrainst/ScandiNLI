@@ -45,8 +45,8 @@ def train(config: DictConfig) -> None:
     tokenizer = AutoTokenizer.from_pretrained(config.input_model_id)
 
     # Ensure that `model_max_length` is set
-    if config.model_max_length > 100_000:
-        config.model_max_length = 512
+    if tokenizer.model_max_length > 100_000:
+        tokenizer.model_max_length = 512
 
     # Tokenize the dataset
     tokenized_dataset = dataset.map(
