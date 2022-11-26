@@ -7,7 +7,6 @@ from typing import Dict
 import hydra
 import numpy as np
 import torch
-from datasets.arrow_dataset import Dataset
 from datasets.dataset_dict import DatasetDict
 from omegaconf import DictConfig
 from sklearn.metrics import accuracy_score, f1_score
@@ -52,7 +51,6 @@ def train(config: DictConfig) -> None:
     tokenized_dataset = dataset.map(
         partial(tokenize_function, tokenizer=tokenizer),
         batched=True,
-        remove_columns=dataset["train"].column_names,
     )
 
     # Define the data collator
@@ -87,7 +85,6 @@ def train(config: DictConfig) -> None:
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
         fp16=torch.cuda.is_available(),
-        label_names=["entailment", "neutral", "contradiction"],
     )
 
     # Define the trainer
