@@ -6,7 +6,7 @@ ______________________________________________________________________
 [![Documentation](https://img.shields.io/badge/docs-passing-green)](https://saattrupdan.github.io/scandinli/scandinli.html)
 [![License](https://img.shields.io/github/license/saattrupdan/scandinli)](https://github.com/saattrupdan/scandinli/blob/main/LICENSE)
 [![LastCommit](https://img.shields.io/github/last-commit/saattrupdan/scandinli)](https://github.com/saattrupdan/scandinli/commits/main)
-[![Code Coverage](https://img.shields.io/badge/Coverage-0%25-red.svg)](https://github.com/saattrupdan/scandinli/tree/main/tests)
+[![Code Coverage](https://img.shields.io/badge/Coverage-40%25-orange.svg)](https://github.com/saattrupdan/scandinli/tree/main/tests)
 
 
 Developers:
