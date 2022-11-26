@@ -1,5 +1,6 @@
 """Train an NLI model on the built dataset."""
 
+import logging
 from functools import partial
 from pathlib import Path
 from typing import Dict
@@ -23,6 +24,9 @@ from transformers import (
     TrainingArguments,
 )
 from transformers.training_args import OptimizerNames
+
+# Ignore loggers from `datasets`
+logging.getLogger("datasets").setLevel(logging.ERROR)
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
