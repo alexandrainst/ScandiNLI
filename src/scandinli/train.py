@@ -106,11 +106,15 @@ def train(config: DictConfig) -> None:
         callbacks=[EarlyStoppingCallback(early_stopping_patience=config.patience)],
     )
 
-    # Train the model
-    trainer.train()
+    # Train the model, continuing from the last checkpoint if it exists
+    if config.checkpoint:
+        checkpoint = model_dir / f"checkpoint-{config.checkpoint}"
+    else:
+        checkpoint = None
+    trainer.train(resume_from_checkpoint=checkpoint)
 
     # Save the model
-    trainer.save_model(model_dir)
+    trainer.save_model()
 
     # Evaluate the model
     trainer.evaluate(tokenized_dataset["test"])

@@ -5,14 +5,15 @@ seed: 4242
 input_model_id: NbAiLab/nb-bert-large
 output_model_id: saattrupdan/nbailab-large-nli-scandi
 batch_size: 8
-patience: 5
+patience: 10
 learning_rate: 2e-5
-max_steps: 10_000
+max_steps: 50_000
 warmup_ratio: 0.01
-logging_steps: 30
-eval_steps: 30
-save_steps: 30
+logging_steps: 100
+eval_steps: 100
+save_steps: 100
 save_total_limit: 1
+checkpoint:
 
 dirs:
   data: data
