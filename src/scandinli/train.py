@@ -39,7 +39,7 @@ def train(config: DictConfig) -> None:
     model_dir = Path(config.dirs.models) / config.output_model_id
 
     # Load in the dataset dictionary
-    dataset: DatasetDict = Dataset.load_from_disk(dataset_dir)
+    dataset = DatasetDict.load_from_disk(dataset_dir)
 
     # Load the tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config.input_model_id)
