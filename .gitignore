@@ -97,3 +97,9 @@ docs/scandinli/
 docs/scandinli.html
 docs/index.html
 docs/search.json
+
+# Data
+data/
+
+# Models
+models/
