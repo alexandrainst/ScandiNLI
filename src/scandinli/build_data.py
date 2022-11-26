@@ -174,6 +174,8 @@ def build_dataset_for_single_language(
             # Update the progress bar
             log_str = f"Building dataset: {cfg.id}"
             extras = [x for x in [cfg.subset, cfg.split] if x is not None]
+            if cfg.use_subset is not None:
+                extras.append(f"from {cfg.use_subset.start} to {cfg.use_subset.end}")
             if extras:
                 log_str += f' ({", ".join(extras)})'
             pbar.set_description(log_str)
@@ -191,7 +193,7 @@ def build_dataset_for_single_language(
                 column_mapping={
                     cfg.premise_column: "premise",
                     cfg.hypothesis_column: "hypothesis",
-                    cfg.label_column: "label",
+                    cfg.label_column: "labels",
                 }
             )
 
@@ -200,7 +202,7 @@ def build_dataset_for_single_language(
                 column_names=[
                     col
                     for col in dataset.column_names
-                    if col not in ["premise", "hypothesis", "label"]
+                    if col not in ["premise", "hypothesis", "labels"]
                 ],
             )
 
@@ -216,12 +218,12 @@ def build_dataset_for_single_language(
             # Convert the labels to the new label names
             dataset = dataset.map(
                 lambda example: {
-                    "label": label_mapping[example["label"]],
+                    "labels": label_mapping[example["labels"]],
                 },
             )
 
             # Change the label names
-            dataset.features["label"] = ClassLabel(
+            dataset.features["labels"] = ClassLabel(
                 num_classes=3,
                 names=new_label_names,
             )
