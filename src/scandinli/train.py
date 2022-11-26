@@ -8,6 +8,7 @@ from typing import Dict
 import hydra
 import numpy as np
 import torch
+from datasets import disable_progress_bar
 from datasets.dataset_dict import DatasetDict
 from omegaconf import DictConfig
 from sklearn.metrics import accuracy_score, f1_score
@@ -27,6 +28,9 @@ from transformers.training_args import OptimizerNames
 
 # Ignore loggers from `datasets`
 logging.getLogger("datasets").setLevel(logging.ERROR)
+
+# Disable the `datasets` progress bar
+disable_progress_bar()
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
