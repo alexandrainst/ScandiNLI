@@ -60,33 +60,27 @@ $ make view-docs
 ├── .gitignore
 ├── .pre-commit-config.yaml
 ├── CHANGELOG.md
-├── CODE_OF_CONDUCT.md
-├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
 ├── config
 │   ├── __init__.py
-│   ├── config.yaml
-│   ├── model
-│   │   └── model1.yaml
-│   └── process
-│       └── process1.yaml
+│   └── config.yaml
 ├── data
-│   ├── final
-│   ├── processed
-│   └── raw
 ├── makefile
 ├── models
 ├── notebooks
 ├── poetry.toml
 ├── pyproject.toml
 ├── src
-│   ├── scripts
-│   │   ├── fix_dot_env_file.py
-│   │   └── versioning.py
-│   └── scandinli
-│       ├── __init__.py
-│       └── demo.py
+│   ├── scandinli
+│   │   ├── __init__.py
+│   │   ├── build_data.py
+│   │   └── train.py
+│   └── scripts
+│       ├── build_data.py
+│       ├── fix_dot_env_file.py
+│       ├── train.py
+│       └── versioning.py
 └── tests
     └── __init__.py
 ```
