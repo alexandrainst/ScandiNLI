@@ -87,6 +87,7 @@ def train(config: DictConfig) -> None:
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
         fp16=torch.cuda.is_available(),
+        label_names=["entailment", "neutral", "contradiction"],
     )
 
     # Define the trainer
