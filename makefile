@@ -124,6 +124,7 @@ tree:
 		-I raw \
 		-I processed \
 		-I final \
+		-I models--* \
 		-I checkpoint-* \
 		-I .coverage* \
 		-I .DS_Store \
