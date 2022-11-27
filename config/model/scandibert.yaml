@@ -1,0 +1,4 @@
+input_model_id: vesteinn/ScandiBERT
+output_model_id: alexandrainst/scandibert-nli-scandi
+wandb_run_name: scandibert-nli-scandi
+batch_size: 16

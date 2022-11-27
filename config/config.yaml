@@ -1,13 +1,10 @@
 defaults:
   - _self_
+  - model: nb_bert_large
 
 seed: 4242
-input_model_id: NbAiLab/nb-bert-large
-output_model_id: alexandrainst/nbailab-large-nli-scandi
 use_wandb: True
-wandb_run_name: nb-bert-large-nli-scandi
 push_to_hub: True
-batch_size: 2
 patience: 100
 learning_rate: 2e-5
 max_steps: 50_000

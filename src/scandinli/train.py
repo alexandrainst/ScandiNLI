@@ -43,13 +43,13 @@ def train(config: DictConfig) -> None:
     """
     # Define the path to the data and model
     dataset_dir = Path(config.dirs.data) / config.dirs.final / "ScandiNLI"
-    model_dir = Path(config.dirs.models) / config.output_model_id
+    model_dir = Path(config.dirs.models) / config.model.output_model_id
 
     # Load in the dataset dictionary
     dataset = DatasetDict.load_from_disk(dataset_dir)
 
     # Load the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(config.input_model_id)
+    tokenizer = AutoTokenizer.from_pretrained(config.model.input_model_id)
 
     # Ensure that `model_max_length` is set
     if tokenizer.model_max_length > 100_000:
@@ -66,7 +66,7 @@ def train(config: DictConfig) -> None:
 
     # Define the model
     model = AutoModelForSequenceClassification.from_pretrained(
-        config.input_model_id,
+        config.model.input_model_id,
         num_labels=3,
         cache_dir=model_dir,
     )
@@ -82,9 +82,9 @@ def train(config: DictConfig) -> None:
         save_steps=config.save_steps,
         max_steps=config.max_steps,
         save_total_limit=config.save_total_limit,
-        per_device_train_batch_size=config.batch_size,
-        per_device_eval_batch_size=config.batch_size,
-        gradient_accumulation_steps=32 // config.batch_size,
+        per_device_train_batch_size=config.model.batch_size,
+        per_device_eval_batch_size=config.model.batch_size,
+        gradient_accumulation_steps=32 // config.model.batch_size,
         learning_rate=config.learning_rate,
         warmup_ratio=config.warmup_ratio,
         load_best_model_at_end=True,
@@ -93,7 +93,7 @@ def train(config: DictConfig) -> None:
         use_mps_device=torch.backends.mps.is_available(),
         fp16=torch.cuda.is_available(),
         report_to=["wandb"] if config.use_wandb else ["none"],
-        run_name=config.wandb_run_name,
+        run_name=config.model.wandb_run_name,
     )
 
     # Define the trainer

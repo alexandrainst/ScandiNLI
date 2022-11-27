@@ -1,0 +1,4 @@
+input_model_id: xlm-roberta-large
+output_model_id: alexandrainst/xlm-roberta-large-nli-scandi
+wandb_run_name: xlm-roberta-large-nli-scandi
+batch_size: 4
