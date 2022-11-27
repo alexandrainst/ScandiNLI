@@ -82,5 +82,8 @@ $ make view-docs
 │       ├── train.py
 │       └── versioning.py
 └── tests
-    └── __init__.py
+    ├── __init__.py
+    ├── conftest.py
+    ├── test_build_data.py
+    └── test_train.py
 ```
