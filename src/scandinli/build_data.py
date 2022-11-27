@@ -115,14 +115,37 @@ def build_validation_data(config: DictConfig) -> Dataset:
     raw_dir = Path(config.dirs.data) / config.dirs.raw
 
     # Load the datasets for each language
-    val_dataset = build_dataset_for_single_language(
-        dataset_configs=[config.validation_dataset],
+    da_dataset = build_dataset_for_single_language(
+        dataset_configs=config.val_datasets.da,
+        cache_dir=raw_dir,
+        seed=config.seed,
+    )
+    sv_dataset = build_dataset_for_single_language(
+        dataset_configs=config.val_datasets.sv,
+        cache_dir=raw_dir,
+        seed=config.seed,
+    )
+    nb_dataset = build_dataset_for_single_language(
+        dataset_configs=config.val_datasets.nb,
         cache_dir=raw_dir,
         seed=config.seed,
     )
 
+    # Get the proportions each of the languages should have
+    proportions = [
+        config.dataset_proportions.da,
+        config.dataset_proportions.sv,
+        config.dataset_proportions.nb,
+    ]
+
+    # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
+    dataset = interleave_datasets(
+        datasets=[da_dataset, sv_dataset, nb_dataset],
+        probabilities=proportions,
+    )
+
     # Return the dataset
-    return val_dataset
+    return dataset
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
@@ -141,14 +164,37 @@ def build_test_data(config: DictConfig) -> Dataset:
     raw_dir = Path(config.dirs.data) / config.dirs.raw
 
     # Load the datasets for each language
-    test_dataset = build_dataset_for_single_language(
-        dataset_configs=[config.test_dataset],
+    da_dataset = build_dataset_for_single_language(
+        dataset_configs=config.test_datasets.da,
+        cache_dir=raw_dir,
+        seed=config.seed,
+    )
+    sv_dataset = build_dataset_for_single_language(
+        dataset_configs=config.test_datasets.sv,
+        cache_dir=raw_dir,
+        seed=config.seed,
+    )
+    nb_dataset = build_dataset_for_single_language(
+        dataset_configs=config.test_datasets.nb,
         cache_dir=raw_dir,
         seed=config.seed,
     )
 
+    # Get the proportions each of the languages should have
+    proportions = [
+        config.dataset_proportions.da,
+        config.dataset_proportions.sv,
+        config.dataset_proportions.nb,
+    ]
+
+    # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
+    dataset = interleave_datasets(
+        datasets=[da_dataset, sv_dataset, nb_dataset],
+        probabilities=proportions,
+    )
+
     # Return the dataset
-    return test_dataset
+    return dataset
 
 
 def build_dataset_for_single_language(
