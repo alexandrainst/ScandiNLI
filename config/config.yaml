@@ -25,7 +25,7 @@ dirs:
 
 train_datasets:
   da:
-    - id: strombergnlp/danfever
+    - id: data/processed/danfever
       subset:
       split: train
       premise_column: evidence_extract
@@ -35,9 +35,6 @@ train_datasets:
         contradiction: Refuted
         entailment: Supported
         neutral: NotEnoughInfo
-      use_subset:
-        start: 0
-        end: 5000
 
     - id: KBLab/overlim
       subset: mnli_da
@@ -49,7 +46,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: KBLab/overlim
       subset: cb_da
@@ -61,7 +57,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: KBLab/overlim
       subset: wnli_da
@@ -73,7 +68,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
   sv:
     - id: KBLab/overlim
@@ -86,7 +80,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: KBLab/overlim
       subset: cb_sv
@@ -98,7 +91,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: KBLab/overlim
       subset: wnli_sv
@@ -110,7 +102,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: MoritzLaurer/multilingual-NLI-26lang-2mil7
       subset:
@@ -122,7 +113,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: MoritzLaurer/multilingual-NLI-26lang-2mil7
       subset:
@@ -134,7 +124,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
   nb:
     - id: KBLab/overlim
@@ -147,7 +136,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: KBLab/overlim
       subset: cb_nb
@@ -159,7 +147,6 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
     - id: KBLab/overlim
       subset: wnli_nb
@@ -171,12 +158,11 @@ train_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
-      use_subset:
 
 validation_dataset:
-  id: strombergnlp/danfever
+  id: data/processed/danfever
   subset:
-  split: train
+  split: val
   premise_column: evidence_extract
   hypothesis_column: claim
   label_column: label
@@ -184,14 +170,11 @@ validation_dataset:
     contradiction: Refuted
     entailment: Supported
     neutral: NotEnoughInfo
-  use_subset:
-    start: 5000
-    end: 5407
 
 test_dataset:
-  id: strombergnlp/danfever
+  id: data/processed/danfever
   subset:
-  split: train
+  split: test
   premise_column: evidence_extract
   hypothesis_column: claim
   label_column: label
@@ -199,9 +182,6 @@ test_dataset:
     contradiction: Refuted
     entailment: Supported
     neutral: NotEnoughInfo
-  use_subset:
-    start: 5407
-    end: 6407
 
 dataset_proportions:
   da: 0.3334

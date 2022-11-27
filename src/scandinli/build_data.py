@@ -33,6 +33,9 @@ def build_data(config: DictConfig) -> None:
     # Define data directory
     final_dir = Path(config.dirs.data) / config.dirs.final
 
+    # Build the DanFever dataset
+    build_danfever_with_splits(config)
+
     # Build the three splits
     train = build_training_data(config)
     val = build_validation_data(config)
@@ -174,8 +177,6 @@ def build_dataset_for_single_language(
             # Update the progress bar
             log_str = f"Building dataset: {cfg.id}"
             extras = [x for x in [cfg.subset, cfg.split] if x is not None]
-            if cfg.use_subset is not None:
-                extras.append(f"from {cfg.use_subset.start} to {cfg.use_subset.end}")
             if extras:
                 log_str += f' ({", ".join(extras)})'
             pbar.set_description(log_str)
@@ -231,12 +232,6 @@ def build_dataset_for_single_language(
             # Shuffle the dataset
             dataset = dataset.shuffle(seed=seed)
 
-            # Truncate the dataset
-            if cfg.use_subset is not None:
-                dataset = dataset.select(
-                    range(cfg.use_subset.start, cfg.use_subset.end)
-                )
-
             # Add the dataset to the list of datasets
             all_datasets.append(dataset)
 
@@ -245,3 +240,64 @@ def build_dataset_for_single_language(
 
     # Return the dataset
     return dataset
+
+
+@hydra.main(config_path="../../config", config_name="config", version_base=None)
+def build_danfever_with_splits(config: DictConfig) -> None:
+    """Creates dataset splits for the DanFEVER dataset and stores them to disk.
+
+    Args:
+        config (DictConfig):
+            Hydra configuration object.
+    """
+    # Load the DanFEVER dataset
+    dataset = load_dataset("strombergnlp/danfever", split="train")
+
+    # Convert the dataset to a Pandas DataFrame
+    df = dataset.to_pandas()
+
+    # Get list unique `evidence_extract` values, along with their counts
+    evidence_extract_counts = df.evidence_extract.value_counts()
+
+    # Pick the evidence extracts for the test split, being the ones that first sum up
+    # above 1,000 samples
+    test_evidence_extract = evidence_extract_counts[
+        evidence_extract_counts.cumsum() < 1000
+    ].index.tolist()
+
+    # Pick the evidence extracts for the validation split, being the ones that first
+    # sum up above 500 samples, but not in the test split
+    val_evidence_extract = evidence_extract_counts[
+        (evidence_extract_counts.cumsum() < 1500)
+        & (~evidence_extract_counts.index.isin(test_evidence_extract))
+    ].index.tolist()
+
+    # Pick the evidence extracts for the train split, being the rest
+    train_evidence_extract = evidence_extract_counts[
+        ~evidence_extract_counts.index.isin(
+            test_evidence_extract + val_evidence_extract
+        )
+    ].index.tolist()
+
+    # Convert the dataframes back to datasets
+    train_dataset = Dataset.from_pandas(
+        df[df.evidence_extract.isin(train_evidence_extract)],
+        preserve_index=False,
+    )
+    val_dataset = Dataset.from_pandas(
+        df[df.evidence_extract.isin(val_evidence_extract)],
+        preserve_index=False,
+    )
+    test_dataset = Dataset.from_pandas(
+        df[df.evidence_extract.isin(test_evidence_extract)],
+        preserve_index=False,
+    )
+
+    # Package the datasets into a DatasetDict
+    dataset_dict = DatasetDict(
+        dict(train=train_dataset, validation=val_dataset, test=test_dataset)
+    )
+
+    # Save the dataset splits to disk
+    dataset_path = Path(config.dirs.data) / config.dirs.processed / "danfever"
+    dataset_dict.save_to_disk(dataset_path)
