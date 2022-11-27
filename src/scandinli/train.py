@@ -81,7 +81,6 @@ def train(config: DictConfig) -> None:
         logging_steps=config.logging_steps,
         save_steps=config.save_steps,
         max_steps=config.max_steps,
-        report_to="none",
         save_total_limit=config.save_total_limit,
         per_device_train_batch_size=config.batch_size,
         per_device_eval_batch_size=config.batch_size,
@@ -93,6 +92,8 @@ def train(config: DictConfig) -> None:
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
         fp16=torch.cuda.is_available(),
+        report_to="wandb",
+        run_name="nb-bert-large-nli-scandi",
     )
 
     # Define the trainer
