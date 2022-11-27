@@ -7,6 +7,7 @@ from typing import Dict, List
 import hydra
 from datasets import disable_progress_bar
 from datasets.arrow_dataset import Dataset
+from datasets.builder import DatasetGenerationError
 from datasets.combine import concatenate_datasets, interleave_datasets
 from datasets.dataset_dict import DatasetDict
 from datasets.features import ClassLabel
@@ -182,12 +183,15 @@ def build_dataset_for_single_language(
             pbar.set_description(log_str)
 
             # Load the dataset
-            dataset = load_dataset(
-                cfg.id,
-                cfg.subset,
-                split=cfg.split,
-                cache_dir=cache_dir,
-            )
+            try:
+                dataset = load_dataset(
+                    cfg.id,
+                    cfg.subset,
+                    split=cfg.split,
+                    cache_dir=cache_dir,
+                )
+            except DatasetGenerationError:
+                dataset = DatasetDict.load_from_disk(cfg.id)[cfg.split]
 
             # Rename the columns
             dataset = dataset.rename_columns(
@@ -295,7 +299,7 @@ def build_danfever_with_splits(config: DictConfig) -> None:
 
     # Package the datasets into a DatasetDict
     dataset_dict = DatasetDict(
-        dict(train=train_dataset, validation=val_dataset, test=test_dataset)
+        dict(train=train_dataset, val=val_dataset, test=test_dataset)
     )
 
     # Save the dataset splits to disk
