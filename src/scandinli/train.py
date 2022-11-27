@@ -92,8 +92,8 @@ def train(config: DictConfig) -> None:
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
         fp16=torch.cuda.is_available(),
-        report_to="wandb",
-        run_name="nb-bert-large-nli-scandi",
+        report_to=["wandb"],
+        run_name=config.wandb_run_name,
     )
 
     # Define the trainer
