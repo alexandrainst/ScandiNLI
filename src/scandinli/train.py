@@ -119,6 +119,10 @@ def train(config: DictConfig) -> None:
     # Evaluate the model
     trainer.evaluate(tokenized_dataset["test"])
 
+    # Push the model to the Hugging Face Hub
+    if config.push_to_hub:
+        trainer.push_to_hub()
+
 
 def tokenize_function(
     examples: BatchEncoding, tokenizer: PreTrainedTokenizerBase
