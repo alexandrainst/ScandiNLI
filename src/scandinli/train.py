@@ -165,5 +165,4 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
         mcc=matthews_corrcoef(labels, predictions),
         accuracy=accuracy_score(labels, predictions),
         macro_f1=f1_score(labels, predictions, average="macro"),
-        micro_f1=f1_score(labels, predictions, average="micro"),
     )
