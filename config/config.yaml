@@ -141,7 +141,7 @@ val_datasets:
   sv:
     - id: KBLab/overlim
       subset: mnli_sv
-      split: val
+      split: validation
       premise_column: premise
       hypothesis_column: hypothesis
       label_column: label
@@ -152,7 +152,7 @@ val_datasets:
   nb:
     - id: KBLab/overlim
       subset: mnli_nb
-      split: val
+      split: validation
       premise_column: premise
       hypothesis_column: hypothesis
       label_column: label
