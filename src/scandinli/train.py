@@ -92,7 +92,7 @@ def train(config: DictConfig) -> None:
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
         fp16=torch.cuda.is_available(),
-        report_to=["wandb"],
+        report_to=["wandb"] if config.use_wandb else ["none"],
         run_name=config.wandb_run_name,
     )
 
