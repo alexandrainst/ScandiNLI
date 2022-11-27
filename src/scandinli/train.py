@@ -11,7 +11,7 @@ import torch
 from datasets import disable_progress_bar
 from datasets.dataset_dict import DatasetDict
 from omegaconf import DictConfig
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -161,6 +161,7 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
     return dict(
+        mcc=matthews_corrcoef(labels, predictions),
         accuracy=accuracy_score(labels, predictions),
         macro_f1=f1_score(labels, predictions, average="macro"),
         micro_f1=f1_score(labels, predictions, average="micro"),
