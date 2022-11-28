@@ -73,6 +73,10 @@ def train(config: DictConfig) -> None:
         cache_dir=model_dir,
     )
 
+    # Set the label names
+    model.config.id2label = {0: "entailment", 1: "neutral", 2: "contradiction"}
+    model.config.label2id = {"entailment": 0, "neutral": 1, "contradiction": 2}
+
     # Define the training arguments
     training_args = TrainingArguments(
         output_dir=model_dir,
