@@ -54,7 +54,7 @@ def train(config: DictConfig) -> None:
     )
 
     # Ensure that `model_max_length` is set
-    if tokenizer.model_max_length > 100_000:
+    if tokenizer.model_max_length > 100_000 or tokenizer.model_max_length is None:
         tokenizer.model_max_length = 512
 
     # Tokenize the dataset
