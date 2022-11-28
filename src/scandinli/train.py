@@ -126,7 +126,7 @@ def train(config: DictConfig) -> None:
 
     # Push the model to the Hugging Face Hub
     if config.push_to_hub:
-        trainer.push_to_hub(private=True)
+        model.push_to_hub(config.model.output_model_id, private=True)
         tokenizer.push_to_hub(config.model.output_model_id, private=True)
 
     # Evaluate the model
