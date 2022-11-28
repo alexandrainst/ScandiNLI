@@ -1,0 +1,55 @@
+train_datasets:
+  nb:
+    - id: KBLab/overlim
+      subset: mnli_nb
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+
+    - id: KBLab/overlim
+      subset: cb_nb
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        contradiction: contradiction
+        neutral: neutral
+  sv: []
+  da: []
+
+val_datasets:
+  nb:
+    - id: KBLab/overlim
+      subset: mnli_nb
+      split: validation
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+  sv: []
+  da: []
+
+test_datasets:
+  nb:
+    - id: KBLab/overlim
+      subset: mnli_nb
+      split: test
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+  sv: []
+  da: []

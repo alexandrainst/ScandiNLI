@@ -1,0 +1,77 @@
+train_datasets:
+  sv:
+    - id: KBLab/overlim
+      subset: mnli_sv
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+
+    - id: KBLab/overlim
+      subset: cb_sv
+      split: train
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        contradiction: contradiction
+        neutral: neutral
+
+    - id: MoritzLaurer/multilingual-NLI-26lang-2mil7
+      subset:
+      split: sv_fever
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+
+    - id: MoritzLaurer/multilingual-NLI-26lang-2mil7
+      subset:
+      split: sv_anli
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+  nb: []
+  da: []
+
+val_datasets:
+  sv:
+    - id: KBLab/overlim
+      subset: mnli_sv
+      split: validation
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+  nb: []
+  da: []
+
+test_datasets:
+  sv:
+    - id: KBLab/overlim
+      subset: mnli_sv
+      split: test
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+  nb: []
+  da: []

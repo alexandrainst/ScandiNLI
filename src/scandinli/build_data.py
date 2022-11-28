@@ -67,17 +67,17 @@ def build_training_data(config: DictConfig) -> Dataset:
 
     # Load the datasets for each language
     da_dataset = build_dataset_for_single_language(
-        dataset_configs=config.train_datasets.da,
+        dataset_configs=config.dataset.train_datasets.da,
         cache_dir=raw_dir,
         seed=config.seed,
     )
     sv_dataset = build_dataset_for_single_language(
-        dataset_configs=config.train_datasets.sv,
+        dataset_configs=config.dataset.train_datasets.sv,
         cache_dir=raw_dir,
         seed=config.seed,
     )
     nb_dataset = build_dataset_for_single_language(
-        dataset_configs=config.train_datasets.nb,
+        dataset_configs=config.dataset.train_datasets.nb,
         cache_dir=raw_dir,
         seed=config.seed,
     )
@@ -116,17 +116,17 @@ def build_validation_data(config: DictConfig) -> Dataset:
 
     # Load the datasets for each language
     da_dataset = build_dataset_for_single_language(
-        dataset_configs=config.val_datasets.da,
+        dataset_configs=config.dataset.val_datasets.da,
         cache_dir=raw_dir,
         seed=config.seed,
     )
     sv_dataset = build_dataset_for_single_language(
-        dataset_configs=config.val_datasets.sv,
+        dataset_configs=config.dataset.val_datasets.sv,
         cache_dir=raw_dir,
         seed=config.seed,
     )
     nb_dataset = build_dataset_for_single_language(
-        dataset_configs=config.val_datasets.nb,
+        dataset_configs=config.dataset.val_datasets.nb,
         cache_dir=raw_dir,
         seed=config.seed,
     )
@@ -165,17 +165,17 @@ def build_test_data(config: DictConfig) -> Dataset:
 
     # Load the datasets for each language
     da_dataset = build_dataset_for_single_language(
-        dataset_configs=config.test_datasets.da,
+        dataset_configs=config.dataset.test_datasets.da,
         cache_dir=raw_dir,
         seed=config.seed,
     )
     sv_dataset = build_dataset_for_single_language(
-        dataset_configs=config.test_datasets.sv,
+        dataset_configs=config.dataset.test_datasets.sv,
         cache_dir=raw_dir,
         seed=config.seed,
     )
     nb_dataset = build_dataset_for_single_language(
-        dataset_configs=config.test_datasets.nb,
+        dataset_configs=config.dataset.test_datasets.nb,
         cache_dir=raw_dir,
         seed=config.seed,
     )

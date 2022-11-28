@@ -1,0 +1,4 @@
+input_model_id: NbAiLab/nb-bert-large
+output_model_id: alexandrainst/nb-bert-large-nli-sv
+wandb_run_name: nb-bert-large-sv
+batch_size: 2
