@@ -49,7 +49,9 @@ def train(config: DictConfig) -> None:
     dataset = DatasetDict.load_from_disk(dataset_dir)
 
     # Load the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(config.model.input_model_id)
+    tokenizer = AutoTokenizer.from_pretrained(
+        config.model.input_model_id, cache_dir=model_dir
+    )
 
     # Ensure that `model_max_length` is set
     if tokenizer.model_max_length > 100_000:
