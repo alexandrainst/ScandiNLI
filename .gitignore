@@ -103,3 +103,6 @@ data/
 
 # Models
 models/
+
+# Weights and biases
+wandb/
