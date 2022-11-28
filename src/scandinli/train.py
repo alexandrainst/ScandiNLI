@@ -124,13 +124,13 @@ def train(config: DictConfig) -> None:
     model.save_pretrained(model_dir)
     tokenizer.save_pretrained(model_dir)
 
-    # Evaluate the model
-    trainer.evaluate(tokenized_dataset["test"])
-
     # Push the model to the Hugging Face Hub
     if config.push_to_hub:
         trainer.push_to_hub(private=True)
         tokenizer.push_to_hub(config.model.output_model_id, private=True)
+
+    # Evaluate the model
+    trainer.evaluate(tokenized_dataset["test"])
 
 
 def tokenize_function(
