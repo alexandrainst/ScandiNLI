@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - model: nb_bert_base
+  - model: nb-bert-large
 
 seed: 4242
 use_wandb: True
