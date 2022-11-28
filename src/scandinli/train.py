@@ -117,7 +117,8 @@ def train(config: DictConfig) -> None:
     trainer.train(resume_from_checkpoint=checkpoint)
 
     # Save the model
-    trainer.save_model()
+    model.save_pretrained(model_dir)
+    tokenizer.save_pretrained(model_dir)
 
     # Evaluate the model
     trainer.evaluate(tokenized_dataset["test"])
