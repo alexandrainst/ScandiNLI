@@ -1,4 +1,4 @@
 input_model_id: NbAiLab/nb-bert-base
 output_model_id: alexandrainst/nbailab-base-nli-scandi
-wandb_run_name: nb-bert-base-nli-scandi
+wandb_run_name: nb-bert-base
 batch_size: 8

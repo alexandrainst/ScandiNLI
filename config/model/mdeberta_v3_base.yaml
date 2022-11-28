@@ -1,4 +1,4 @@
 input_model_id: microsoft/mdeberta-v3-base
 output_model_id: alexandrainst/mdeberta-v3-base-nli-scandi
-wandb_run_name: mdeberta-v3-base-nli-scandi
+wandb_run_name: mdeberta-v3-base
 batch_size: 8
