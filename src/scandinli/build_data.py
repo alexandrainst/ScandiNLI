@@ -84,9 +84,9 @@ def build_training_data(config: DictConfig) -> Dataset:
 
     # Get the proportions each of the languages should have
     proportions = [
-        config.dataset_proportions.da,
-        config.dataset_proportions.sv,
-        config.dataset_proportions.nb,
+        config.dataset.dataset_proportions.da,
+        config.dataset.dataset_proportions.sv,
+        config.dataset.dataset_proportions.nb,
     ]
 
     # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
@@ -133,9 +133,9 @@ def build_validation_data(config: DictConfig) -> Dataset:
 
     # Get the proportions each of the languages should have
     proportions = [
-        config.dataset_proportions.da,
-        config.dataset_proportions.sv,
-        config.dataset_proportions.nb,
+        config.dataset.dataset_proportions.da,
+        config.dataset.dataset_proportions.sv,
+        config.dataset.dataset_proportions.nb,
     ]
 
     # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
@@ -182,9 +182,9 @@ def build_test_data(config: DictConfig) -> Dataset:
 
     # Get the proportions each of the languages should have
     proportions = [
-        config.dataset_proportions.da,
-        config.dataset_proportions.sv,
-        config.dataset_proportions.nb,
+        config.dataset.dataset_proportions.da,
+        config.dataset.dataset_proportions.sv,
+        config.dataset.dataset_proportions.nb,
     ]
 
     # Interleave the Danish, Swedish and Norwegian datasets with the given proportions

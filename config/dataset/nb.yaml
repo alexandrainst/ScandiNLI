@@ -53,3 +53,8 @@ test_datasets:
         contradiction: contradiction
   sv: []
   da: []
+
+dataset_proportions:
+  da: 1.0
+  sv: 0.0
+  nb: 0.0

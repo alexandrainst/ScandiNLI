@@ -170,3 +170,8 @@ test_datasets:
         entailment: entailment
         neutral: neutral
         contradiction: contradiction
+
+dataset_proportions:
+  da: 0.3334
+  sv: 0.3333
+  nb: 0.3333
