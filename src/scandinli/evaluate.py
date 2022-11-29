@@ -43,11 +43,17 @@ def evaluate(config: DictConfig) -> None:
     raw_dir = Path(config.dirs.data) / config.dirs.raw
     model_dir = Path(config.dirs.models) / config.model.output_model_id
 
+    # Disable the `transformers` logging during model load
+    hf_logging.set_verbosity_error()
+
     # Load the model and tokenizer
     tokenizer = AutoTokenizer.from_pretrained(config.model.output_model_id)
     model = AutoModelForSequenceClassification.from_pretrained(
         config.model.output_model_id
     )
+
+    # Enable the `transformers` logging again
+    hf_logging.set_verbosity_info()
 
     # Turn off tokenizer parallelism
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -91,7 +97,6 @@ def evaluate(config: DictConfig) -> None:
         )
 
         # Disable trainer logging
-        hf_logging.set_verbosity_error()
         trainer.log = lambda logs: None
 
         # Evaluate the model
