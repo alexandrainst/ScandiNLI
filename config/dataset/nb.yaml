@@ -40,6 +40,6 @@ val_datasets:
   da: []
 
 dataset_proportions:
-  da: 1.0
+  da: 0.0
   sv: 0.0
-  nb: 0.0
+  nb: 1.0
