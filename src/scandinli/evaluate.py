@@ -52,6 +52,10 @@ def evaluate(config: DictConfig) -> None:
         config.model.output_model_id
     )
 
+    # Ensure that `model_max_length` is set
+    if tokenizer.model_max_length > 100_000 or tokenizer.model_max_length is None:
+        tokenizer.model_max_length = 512
+
     # Enable the `transformers` logging again
     hf_logging.set_verbosity_info()
 
