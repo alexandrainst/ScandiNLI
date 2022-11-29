@@ -165,6 +165,7 @@ def build_dataset_for_single_language(
     dataset_configs: List[Dict[str, str]],
     cache_dir: str,
     seed: int,
+    progress_bar: bool = True,
 ) -> Dataset:
     """Build a dataset for a single language.
 
@@ -175,6 +176,8 @@ def build_dataset_for_single_language(
             The directory to cache the dataset in.
         seed (int):
             The seed to use for shuffling the dataset.
+        progress_bar (bool, optional):
+            Whether to show a progress bar. Defaults to True.
 
     Returns:
         Dataset:
@@ -182,7 +185,8 @@ def build_dataset_for_single_language(
     """
     # Iterate over all the datasets in the configuration
     all_datasets: List[Dataset] = list()
-    with tqdm(dataset_configs, desc="Building dataset") as pbar:
+    disable = not progress_bar
+    with tqdm(dataset_configs, desc="Building dataset", disable=disable) as pbar:
         for cfg in pbar:
 
             # Update the progress bar
