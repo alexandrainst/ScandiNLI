@@ -70,7 +70,7 @@ def build_training_data(config: DictConfig) -> Dataset:
     all_proportions: List[float] = list()
 
     # Load the Danish dataset
-    if config.dataset.train_datasets.da:
+    if len(config.dataset.train_datasets.da) > 0:
         da_dataset = build_dataset_for_single_language(
             dataset_configs=config.dataset.train_datasets.da,
             cache_dir=raw_dir,
@@ -80,7 +80,7 @@ def build_training_data(config: DictConfig) -> Dataset:
         all_proportions.append(config.dataset.dataset_proportions.da)
 
     # Load the Swedish dataset
-    if config.dataset.train_datasets.sv:
+    if len(config.dataset.train_datasets.sv) > 0:
         sv_dataset = build_dataset_for_single_language(
             dataset_configs=config.dataset.train_datasets.sv,
             cache_dir=raw_dir,
@@ -90,7 +90,7 @@ def build_training_data(config: DictConfig) -> Dataset:
         all_proportions.append(config.dataset.dataset_proportions.sv)
 
     # Load the Norwegian dataset
-    if config.dataset.train_datasets.nb:
+    if len(config.dataset.train_datasets.nb) > 0:
         nb_dataset = build_dataset_for_single_language(
             dataset_configs=config.dataset.train_datasets.nb,
             cache_dir=raw_dir,
@@ -121,35 +121,42 @@ def build_validation_data(config: DictConfig) -> Dataset:
     # Define data directory
     raw_dir = Path(config.dirs.data) / config.dirs.raw
 
-    # Load the datasets for each language
-    da_dataset = build_dataset_for_single_language(
-        dataset_configs=config.dataset.val_datasets.da,
-        cache_dir=raw_dir,
-        seed=config.seed,
-    )
-    sv_dataset = build_dataset_for_single_language(
-        dataset_configs=config.dataset.val_datasets.sv,
-        cache_dir=raw_dir,
-        seed=config.seed,
-    )
-    nb_dataset = build_dataset_for_single_language(
-        dataset_configs=config.dataset.val_datasets.nb,
-        cache_dir=raw_dir,
-        seed=config.seed,
-    )
+    # Initialise the lists of all datasets and their proportions
+    all_datasets: List[Dataset] = list()
+    all_proportions: List[float] = list()
 
-    # Get the proportions each of the languages should have
-    proportions = [
-        config.dataset.dataset_proportions.da,
-        config.dataset.dataset_proportions.sv,
-        config.dataset.dataset_proportions.nb,
-    ]
+    # Load the Danish dataset
+    if len(config.dataset.val_datasets.da) > 0:
+        da_dataset = build_dataset_for_single_language(
+            dataset_configs=config.dataset.val_datasets.da,
+            cache_dir=raw_dir,
+            seed=config.seed,
+        )
+        all_datasets.append(da_dataset)
+        all_proportions.append(config.dataset.dataset_proportions.da)
+
+    # Load the Swedish dataset
+    if len(config.dataset.val_datasets.sv) > 0:
+        sv_dataset = build_dataset_for_single_language(
+            dataset_configs=config.dataset.val_datasets.sv,
+            cache_dir=raw_dir,
+            seed=config.seed,
+        )
+        all_datasets.append(sv_dataset)
+        all_proportions.append(config.dataset.dataset_proportions.sv)
+
+    # Load the Norwegian dataset
+    if len(config.dataset.val_datasets.nb) > 0:
+        nb_dataset = build_dataset_for_single_language(
+            dataset_configs=config.dataset.val_datasets.nb,
+            cache_dir=raw_dir,
+            seed=config.seed,
+        )
+        all_datasets.append(nb_dataset)
+        all_proportions.append(config.dataset.dataset_proportions.nb)
 
     # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
-    dataset = interleave_datasets(
-        datasets=[da_dataset, sv_dataset, nb_dataset],
-        probabilities=proportions,
-    )
+    dataset = interleave_datasets(datasets=all_datasets, probabilities=all_proportions)
 
     # Return the dataset
     return dataset
@@ -170,35 +177,42 @@ def build_test_data(config: DictConfig) -> Dataset:
     # Define data directory
     raw_dir = Path(config.dirs.data) / config.dirs.raw
 
-    # Load the datasets for each language
-    da_dataset = build_dataset_for_single_language(
-        dataset_configs=config.dataset.test_datasets.da,
-        cache_dir=raw_dir,
-        seed=config.seed,
-    )
-    sv_dataset = build_dataset_for_single_language(
-        dataset_configs=config.dataset.test_datasets.sv,
-        cache_dir=raw_dir,
-        seed=config.seed,
-    )
-    nb_dataset = build_dataset_for_single_language(
-        dataset_configs=config.dataset.test_datasets.nb,
-        cache_dir=raw_dir,
-        seed=config.seed,
-    )
+    # Initialise the lists of all datasets and their proportions
+    all_datasets: List[Dataset] = list()
+    all_proportions: List[float] = list()
 
-    # Get the proportions each of the languages should have
-    proportions = [
-        config.dataset.dataset_proportions.da,
-        config.dataset.dataset_proportions.sv,
-        config.dataset.dataset_proportions.nb,
-    ]
+    # Load the Danish dataset
+    if len(config.dataset.test_datasets.da) > 0:
+        da_dataset = build_dataset_for_single_language(
+            dataset_configs=config.dataset.test_datasets.da,
+            cache_dir=raw_dir,
+            seed=config.seed,
+        )
+        all_datasets.append(da_dataset)
+        all_proportions.append(config.dataset.dataset_proportions.da)
+
+    # Load the Swedish dataset
+    if len(config.dataset.test_datasets.sv) > 0:
+        sv_dataset = build_dataset_for_single_language(
+            dataset_configs=config.dataset.test_datasets.sv,
+            cache_dir=raw_dir,
+            seed=config.seed,
+        )
+        all_datasets.append(sv_dataset)
+        all_proportions.append(config.dataset.dataset_proportions.sv)
+
+    # Load the Norwegian dataset
+    if len(config.dataset.test_datasets.nb) > 0:
+        nb_dataset = build_dataset_for_single_language(
+            dataset_configs=config.dataset.test_datasets.nb,
+            cache_dir=raw_dir,
+            seed=config.seed,
+        )
+        all_datasets.append(nb_dataset)
+        all_proportions.append(config.dataset.dataset_proportions.nb)
 
     # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
-    dataset = interleave_datasets(
-        datasets=[da_dataset, sv_dataset, nb_dataset],
-        probabilities=proportions,
-    )
+    dataset = interleave_datasets(datasets=all_datasets, probabilities=all_proportions)
 
     # Return the dataset
     return dataset
