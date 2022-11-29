@@ -77,7 +77,7 @@ def build_training_data(config: DictConfig) -> Dataset:
             seed=config.seed,
         )
         all_datasets.append(da_dataset)
-        all_proportions.append(config.dataset.train_proportions.da)
+        all_proportions.append(config.dataset.dataset_proportions.da)
 
     # Load the Swedish dataset
     if config.dataset.train_datasets.sv:
@@ -87,7 +87,7 @@ def build_training_data(config: DictConfig) -> Dataset:
             seed=config.seed,
         )
         all_datasets.append(sv_dataset)
-        all_proportions.append(config.dataset.train_proportions.sv)
+        all_proportions.append(config.dataset.dataset_proportions.sv)
 
     # Load the Norwegian dataset
     if config.dataset.train_datasets.nb:
@@ -97,7 +97,7 @@ def build_training_data(config: DictConfig) -> Dataset:
             seed=config.seed,
         )
         all_datasets.append(nb_dataset)
-        all_proportions.append(config.dataset.train_proportions.nb)
+        all_proportions.append(config.dataset.dataset_proportions.nb)
 
     # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
     dataset = interleave_datasets(datasets=all_datasets, probabilities=all_proportions)
