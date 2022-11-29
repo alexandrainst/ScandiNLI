@@ -3,7 +3,7 @@
 import logging
 from functools import partial
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Tuple
 
 import hydra
 import numpy as np
@@ -20,6 +20,7 @@ from transformers import (
     EarlyStoppingCallback,
     EvalPrediction,
     IntervalStrategy,
+    PreTrainedModel,
     PreTrainedTokenizerBase,
     Trainer,
     TrainingArguments,
@@ -53,14 +54,8 @@ def train(config: DictConfig) -> None:
     # Load in the dataset dictionary
     dataset = DatasetDict.load_from_disk(dataset_dir)
 
-    # Load the tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(
-        config.model.input_model_id, cache_dir=model_dir
-    )
-
-    # Ensure that `model_max_length` is set
-    if tokenizer.model_max_length > 100_000 or tokenizer.model_max_length is None:
-        tokenizer.model_max_length = 512
+    # Load the model and tokenizer
+    model, tokenizer = load_model_and_tokenizer(config)
 
     # Tokenize the dataset
     tokenized_dataset = dataset.map(
@@ -70,17 +65,6 @@ def train(config: DictConfig) -> None:
 
     # Define the data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-
-    # Define the model
-    model = AutoModelForSequenceClassification.from_pretrained(
-        config.model.input_model_id,
-        num_labels=3,
-        cache_dir=model_dir,
-    )
-
-    # Set the label names
-    model.config.id2label = {0: "entailment", 1: "neutral", 2: "contradiction"}
-    model.config.label2id = {"entailment": 0, "neutral": 1, "contradiction": 2}
 
     # Define the training arguments
     training_args = TrainingArguments(
@@ -134,8 +118,45 @@ def train(config: DictConfig) -> None:
         model.push_to_hub(config.model.output_model_id, private=True)
         tokenizer.push_to_hub(config.model.output_model_id, private=True)
 
-    # Evaluate the model
-    trainer.evaluate(tokenized_dataset["test"])
+
+def load_model_and_tokenizer(
+    config: DictConfig,
+) -> Tuple[PreTrainedModel, PreTrainedTokenizerBase]:
+    """Load the model and tokenizer.
+
+    Args:
+        config (DictConfig):
+            The Hydra configuration.
+
+    Returns:
+        Tuple[PreTrainedModel, PreTrainedTokenizerBase]:
+            The model and tokenizer.
+    """
+    # Define the model directory
+    model_dir = Path(config.dirs.models) / config.model.output_model_id
+
+    # Load the tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(
+        config.model.input_model_id, cache_dir=model_dir
+    )
+
+    # Ensure that `model_max_length` is set
+    if tokenizer.model_max_length > 100_000 or tokenizer.model_max_length is None:
+        tokenizer.model_max_length = 512
+
+    # Define the model
+    model = AutoModelForSequenceClassification.from_pretrained(
+        config.model.input_model_id,
+        num_labels=3,
+        cache_dir=model_dir,
+    )
+
+    # Set the label names
+    model.config.id2label = {0: "entailment", 1: "neutral", 2: "contradiction"}
+    model.config.label2id = {"entailment": 0, "neutral": 1, "contradiction": 2}
+
+    # Return the model and tokenizer
+    return model, tokenizer
 
 
 def tokenize_function(

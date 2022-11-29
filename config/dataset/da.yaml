@@ -50,21 +50,6 @@ val_datasets:
   sv: []
   nb: []
 
-test_datasets:
-  da:
-    - id: data/processed/danfever
-      subset:
-      split: test
-      premise_column: evidence_extract
-      hypothesis_column: claim
-      label_column: label
-      label_names:
-        contradiction: Refuted
-        entailment: Supported
-        neutral: NotEnoughInfo
-  sv: []
-  nb: []
-
 dataset_proportions:
   da: 1.0
   sv: 0.0

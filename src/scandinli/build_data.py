@@ -25,7 +25,7 @@ disable_progress_bar()
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
 def build_data(config: DictConfig) -> None:
-    """Build an NLI dataset with a training, validation and test split.
+    """Build an NLI dataset with a training and validation split.
 
     Args:
         config (DictConfig):
@@ -40,10 +40,9 @@ def build_data(config: DictConfig) -> None:
     # Build the three splits
     train = build_training_data(config)
     val = build_validation_data(config)
-    test = build_test_data(config)
 
     # Collect the splits into a DatasetDict
-    dataset = DatasetDict(dict(train=train, val=val, test=test))
+    dataset = DatasetDict(dict(train=train, val=val))
 
     # Store the dataset
     dataset.save_to_disk(final_dir / "ScandiNLI")
@@ -149,62 +148,6 @@ def build_validation_data(config: DictConfig) -> Dataset:
     if len(config.dataset.val_datasets.nb) > 0:
         nb_dataset = build_dataset_for_single_language(
             dataset_configs=config.dataset.val_datasets.nb,
-            cache_dir=raw_dir,
-            seed=config.seed,
-        )
-        all_datasets.append(nb_dataset)
-        all_proportions.append(config.dataset.dataset_proportions.nb)
-
-    # Interleave the Danish, Swedish and Norwegian datasets with the given proportions
-    dataset = interleave_datasets(datasets=all_datasets, probabilities=all_proportions)
-
-    # Return the dataset
-    return dataset
-
-
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
-def build_test_data(config: DictConfig) -> Dataset:
-    """Build a test dataset for NLI evaluation.
-
-    Args:
-        config (DictConfig):
-            The Hydra configuration.
-
-    Returns:
-        Dataset:
-            The test dataset.
-    """
-    # Define data directory
-    raw_dir = Path(config.dirs.data) / config.dirs.raw
-
-    # Initialise the lists of all datasets and their proportions
-    all_datasets: List[Dataset] = list()
-    all_proportions: List[float] = list()
-
-    # Load the Danish dataset
-    if len(config.dataset.test_datasets.da) > 0:
-        da_dataset = build_dataset_for_single_language(
-            dataset_configs=config.dataset.test_datasets.da,
-            cache_dir=raw_dir,
-            seed=config.seed,
-        )
-        all_datasets.append(da_dataset)
-        all_proportions.append(config.dataset.dataset_proportions.da)
-
-    # Load the Swedish dataset
-    if len(config.dataset.test_datasets.sv) > 0:
-        sv_dataset = build_dataset_for_single_language(
-            dataset_configs=config.dataset.test_datasets.sv,
-            cache_dir=raw_dir,
-            seed=config.seed,
-        )
-        all_datasets.append(sv_dataset)
-        all_proportions.append(config.dataset.dataset_proportions.sv)
-
-    # Load the Norwegian dataset
-    if len(config.dataset.test_datasets.nb) > 0:
-        nb_dataset = build_dataset_for_single_language(
-            dataset_configs=config.dataset.test_datasets.nb,
             cache_dir=raw_dir,
             seed=config.seed,
         )

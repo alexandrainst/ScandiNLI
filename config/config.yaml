@@ -22,3 +22,38 @@ dirs:
   processed: processed
   final: final
   models: models
+
+test_datasets:
+  da:
+    - id: data/processed/danfever
+      subset:
+      split: test
+      premise_column: evidence_extract
+      hypothesis_column: claim
+      label_column: label
+      label_names:
+        contradiction: Refuted
+        entailment: Supported
+        neutral: NotEnoughInfo
+  sv:
+    - id: KBLab/overlim
+      subset: mnli_sv
+      split: test
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction
+  nb:
+    - id: KBLab/overlim
+      subset: mnli_nb
+      split: test
+      premise_column: premise
+      hypothesis_column: hypothesis
+      label_column: label
+      label_names:
+        entailment: entailment
+        neutral: neutral
+        contradiction: contradiction

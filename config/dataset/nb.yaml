@@ -39,21 +39,6 @@ val_datasets:
   sv: []
   da: []
 
-test_datasets:
-  nb:
-    - id: KBLab/overlim
-      subset: mnli_nb
-      split: test
-      premise_column: premise
-      hypothesis_column: hypothesis
-      label_column: label
-      label_names:
-        entailment: entailment
-        neutral: neutral
-        contradiction: contradiction
-  sv: []
-  da: []
-
 dataset_proportions:
   da: 1.0
   sv: 0.0
