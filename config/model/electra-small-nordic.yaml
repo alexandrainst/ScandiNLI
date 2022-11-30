@@ -2,3 +2,4 @@ input_model_id: jonfd/electra-small-nordic
 output_model_id: alexandrainst/electra-small-nordic-nli-scandi
 wandb_run_name: electra-small-nordic
 batch_size: 32
+fp16: True

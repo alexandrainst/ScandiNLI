@@ -86,7 +86,7 @@ def train(config: DictConfig) -> None:
         optim=OptimizerNames.ADAMW_TORCH,
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
-        fp16=torch.cuda.is_available(),
+        fp16=torch.cuda.is_available() and config.model.fp16,
         report_to=["wandb"] if config.use_wandb else ["none"],
         run_name=config.model.wandb_run_name,
     )
