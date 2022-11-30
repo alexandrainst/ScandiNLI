@@ -23,6 +23,14 @@ dirs:
   final: final
   models: models
 
+evaluation:
+  model_id:
+  batch_size:
+  languages:
+    - da
+    - sv
+    - nb
+
 test_datasets:
   da:
     - id: data/processed/danfever

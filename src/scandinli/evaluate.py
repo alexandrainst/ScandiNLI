@@ -39,18 +39,22 @@ def evaluate(config: DictConfig) -> None:
         config (DictConfig):
             Hydra config object.
     """
+    # Get the model ID
+    if config.evaluation.model_id is not None:
+        model_id = config.evaluation.model_id
+    else:
+        model_id = config.model.output_model_id
+
     # Define data and model directories
     raw_dir = Path(config.dirs.data) / config.dirs.raw
-    model_dir = Path(config.dirs.models) / config.model.output_model_id
+    model_dir = Path(config.dirs.models) / model_id
 
     # Disable the `transformers` logging during model load
     hf_logging.set_verbosity_error()
 
     # Load the model and tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(config.model.output_model_id)
-    model = AutoModelForSequenceClassification.from_pretrained(
-        config.model.output_model_id
-    )
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForSequenceClassification.from_pretrained(model_id)
 
     # Ensure that `model_max_length` is set
     if tokenizer.model_max_length > 100_000 or tokenizer.model_max_length is None:
@@ -63,7 +67,7 @@ def evaluate(config: DictConfig) -> None:
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     # Iterate over the languages
-    for language in ["da", "sv", "nb"]:
+    for language in config.evaluation.languages:
 
         # Build the test datasets
         test = build_dataset_for_single_language(
@@ -71,6 +75,7 @@ def evaluate(config: DictConfig) -> None:
             cache_dir=raw_dir,
             seed=config.seed,
             progress_bar=False,
+            label_names=[model.config.id2label[idx] for idx in [0, 1, 2]],
         )
 
         # Tokenize the datasets
@@ -82,10 +87,16 @@ def evaluate(config: DictConfig) -> None:
         # Define the data collator
         data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
+        # Define batch size
+        if config.evaluation.batch_size is not None:
+            batch_size = config.evaluation.batch_size
+        else:
+            batch_size = config.model.batch_size
+
         # Define the training arguments
         training_args = TrainingArguments(
             output_dir=model_dir,
-            per_device_eval_batch_size=config.model.batch_size,
+            per_device_eval_batch_size=batch_size,
             use_mps_device=torch.backends.mps.is_available(),
             fp16=torch.cuda.is_available(),
             report_to="none",

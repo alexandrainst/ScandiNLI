@@ -166,6 +166,7 @@ def build_dataset_for_single_language(
     cache_dir: str,
     seed: int,
     progress_bar: bool = True,
+    label_names: List[str] = ["entailment", "neutral", "contradiction"],
 ) -> Dataset:
     """Build a dataset for a single language.
 
@@ -178,6 +179,9 @@ def build_dataset_for_single_language(
             The seed to use for shuffling the dataset.
         progress_bar (bool, optional):
             Whether to show a progress bar. Defaults to True.
+        label_names (list of str, optional):
+            The names of the labels. Defaults to ["entailment", "neutral",
+            "contradiction"].
 
     Returns:
         Dataset:
@@ -227,12 +231,9 @@ def build_dataset_for_single_language(
 
             # Set up lists of old and new label name orders
             existing_label_names = list(cfg.label_names.keys())
-            new_label_names = ["entailment", "neutral", "contradiction"]
 
             # Create a mapping, which converts the old label names to the new label names
-            label_mapping = [
-                new_label_names.index(label) for label in existing_label_names
-            ]
+            label_mapping = [label_names.index(label) for label in existing_label_names]
 
             # Convert the labels to the new label names
             dataset = dataset.map(
@@ -244,7 +245,7 @@ def build_dataset_for_single_language(
             # Change the label names
             dataset.features["labels"] = ClassLabel(
                 num_classes=3,
-                names=new_label_names,
+                names=label_names,
             )
 
             # Shuffle the dataset
