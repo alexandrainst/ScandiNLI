@@ -6,13 +6,14 @@ defaults:
 seed: 4242
 use_wandb: True
 push_to_hub: True
-patience: 100
+patience: 10
 learning_rate: 2e-5
-max_steps: 50_000
-warmup_ratio: 0.01
+max_steps: 1_000_000
+warmup_steps: 1_000
 logging_steps: 100
-eval_steps: 100
-save_steps: 100
+eval_steps: 1_000
+save_steps: 1_000
+total_batch_size: 128
 save_total_limit: 1
 checkpoint:
 
