@@ -2,4 +2,3 @@ input_model_id: NbAiLab/nb-bert-large
 output_model_id: alexandrainst/nb-bert-large-nli-nb
 wandb_run_name: nb-bert-large-nb
 batch_size: 2
-fp16: True

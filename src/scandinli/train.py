@@ -67,11 +67,11 @@ def train(config: dictConfig) -> None:
     # Define the training arguments
     training_args = TrainingArguments(
         output_dir=model_dir,
-        evaluation_strategy=IntervalStrategy.STEPS,
-        logging_strategy=IntervalStrategy.STEPS,
-        save_strategy=IntervalStrategy.STEPS,
+        eval_strategy=IntervalStrategy.STEPS,
         eval_steps=config.eval_steps,
+        logging_strategy=IntervalStrategy.STEPS,
         logging_steps=config.logging_steps,
+        save_strategy=IntervalStrategy.STEPS,
         save_steps=config.save_steps,
         max_steps=config.max_steps,
         save_total_limit=config.save_total_limit,
@@ -84,7 +84,8 @@ def train(config: dictConfig) -> None:
         optim=OptimizerNames.ADAMW_TORCH,
         seed=config.seed,
         use_mps_device=torch.backends.mps.is_available(),
-        fp16=torch.cuda.is_available() and config.model.fp16,
+        fp16=torch.cuda.is_available() and not torch.cuda.is_bf16_supported(),
+        bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
         report_to=["wandb"] if config.use_wandb else ["none"],
         run_name=config.model.wandb_run_name,
     )

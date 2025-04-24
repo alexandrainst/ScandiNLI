@@ -2,4 +2,3 @@ input_model_id: xlm-roberta-base
 output_model_id: alexandrainst/xlm-roberta-base-nli-scandi
 wandb_run_name: xlm-roberta-base
 batch_size: 8
-fp16: True

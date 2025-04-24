@@ -1,0 +1,4 @@
+input_model_id: AI-Sweden-Models/roberta-large-1160k
+output_model_id: alexandrainst/ai-sweden-roberta-large-nli-scandi
+wandb_run_name: ai-sweden-roberta-large-nli-scandi
+batch_size: 2
