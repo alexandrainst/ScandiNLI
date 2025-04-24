@@ -3,7 +3,7 @@
 import hydra
 from omegaconf import DictConfig
 
-from scandinli.build_data import build_data
+from scandinli.data import build_data
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
