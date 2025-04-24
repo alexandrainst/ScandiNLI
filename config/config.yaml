@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - model: nb-bert-large
+  - model: ai-sweden-roberta-large
   - dataset: scandi
 
 seed: 4242
