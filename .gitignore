@@ -93,14 +93,9 @@ target/
 outputs/
 multirun/
 
-# Documentation
-docs/scandinli/
-docs/scandinli.html
-docs/index.html
-docs/search.json
-
 # Data
-data/
+data/*
+!data/.gitkeep
 
 # Models
 models/
