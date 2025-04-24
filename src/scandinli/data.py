@@ -205,7 +205,6 @@ def build_dataset_for_single_language(
             assert isinstance(dataset, Dataset)
 
             # Rename the columns
-            breakpoint()
             dataset = dataset.rename_columns(
                 column_mapping={
                     cfg.premise_column: "premise",
