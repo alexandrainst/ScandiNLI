@@ -246,7 +246,6 @@ def build_dataset_for_single_language(
             all_datasets.append(dataset)
 
     # Concatenate the datasets
-    breakpoint()
     dataset = concatenate_datasets(all_datasets).shuffle(seed=seed)
 
     # Return the dataset
