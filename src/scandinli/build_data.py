@@ -2,9 +2,9 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List
 
 import hydra
+import pandas as pd
 from datasets import disable_progress_bar
 from datasets.arrow_dataset import Dataset
 from datasets.builder import DatasetGenerationError
@@ -12,7 +12,7 @@ from datasets.combine import concatenate_datasets, interleave_datasets
 from datasets.dataset_dict import DatasetDict
 from datasets.features import ClassLabel
 from datasets.load import load_dataset
-from omegaconf import DictConfig
+from omegaconf import DictConfig, ListConfig
 from tqdm.auto import tqdm
 
 # Ignore loggers from `datasets`
@@ -28,7 +28,7 @@ def build_data(config: DictConfig) -> None:
     """Build an NLI dataset with a training and validation split.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
     """
     # Define data directory
@@ -53,20 +53,18 @@ def build_training_data(config: DictConfig) -> Dataset:
     """Build an NLI dataset used for training.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
 
     Returns:
-        Dataset:
-            The training dataset.
+        The training dataset.
     """
-
     # Define data directory
     raw_dir = Path(config.dirs.data) / config.dirs.raw
 
     # Initialise the lists of all datasets and their proportions
-    all_datasets: List[Dataset] = list()
-    all_proportions: List[float] = list()
+    all_datasets: list[Dataset] = list()
+    all_proportions: list[float] = list()
 
     # Load the Danish dataset
     if len(config.dataset.train_datasets.da) > 0:
@@ -110,19 +108,18 @@ def build_validation_data(config: DictConfig) -> Dataset:
     """Build a validation dataset for NLI evaluation.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
 
     Returns:
-        Dataset:
-            The validation dataset.
+        The validation dataset.
     """
     # Define data directory
     raw_dir = Path(config.dirs.data) / config.dirs.raw
 
     # Initialise the lists of all datasets and their proportions
-    all_datasets: List[Dataset] = list()
-    all_proportions: List[float] = list()
+    all_datasets: list[Dataset] = list()
+    all_proportions: list[float] = list()
 
     # Load the Danish dataset
     if len(config.dataset.val_datasets.da) > 0:
@@ -162,54 +159,50 @@ def build_validation_data(config: DictConfig) -> Dataset:
 
 
 def build_dataset_for_single_language(
-    dataset_configs: List[Dict[str, str]],
+    dataset_configs: ListConfig,
     cache_dir: str,
     seed: int,
     progress_bar: bool = True,
-    label_names: List[str] = ["entailment", "neutral", "contradiction"],
+    label_names: list[str] = ["entailment", "neutral", "contradiction"],
 ) -> Dataset:
     """Build a dataset for a single language.
 
     Args:
-        dataset_configs (list of Dict[str, str]):
+        dataset_configs:
             The dataset configurations.
-        cache_dir (str):
+        cache_dir:
             The directory to cache the dataset in.
-        seed (int):
+        seed:
             The seed to use for shuffling the dataset.
-        progress_bar (bool, optional):
+        progress_bar (optional):
             Whether to show a progress bar. Defaults to True.
-        label_names (list of str, optional):
+        label_names (optional):
             The names of the labels. Defaults to ["entailment", "neutral",
             "contradiction"].
 
     Returns:
-        Dataset:
-            The dataset.
+        The dataset.
     """
     # Iterate over all the datasets in the configuration
-    all_datasets: List[Dataset] = list()
+    all_datasets: list[Dataset] = list()
     disable = not progress_bar
     with tqdm(dataset_configs, desc="Building dataset", disable=disable) as pbar:
         for cfg in pbar:
-
             # Update the progress bar
             log_str = f"Building dataset: {cfg.id}"
             extras = [x for x in [cfg.subset, cfg.split] if x is not None]
             if extras:
-                log_str += f' ({", ".join(extras)})'
+                log_str += f" ({', '.join(extras)})"
             pbar.set_description(log_str)
 
             # Load the dataset
             try:
                 dataset = load_dataset(
-                    cfg.id,
-                    cfg.subset,
-                    split=cfg.split,
-                    cache_dir=cache_dir,
+                    cfg.id, cfg.subset, split=cfg.split, cache_dir=cache_dir
                 )
             except DatasetGenerationError:
                 dataset = DatasetDict.load_from_disk(cfg.id)[cfg.split]
+            assert isinstance(dataset, Dataset)
 
             # Rename the columns
             dataset = dataset.rename_columns(
@@ -226,27 +219,23 @@ def build_dataset_for_single_language(
                     col
                     for col in dataset.column_names
                     if col not in ["premise", "hypothesis", "labels"]
-                ],
+                ]
             )
 
             # Set up lists of old and new label name orders
             existing_label_names = list(cfg.label_names.keys())
 
-            # Create a mapping, which converts the old label names to the new label names
+            # Create a mapping, which converts the old label names to the new label
+            # names
             label_mapping = [label_names.index(label) for label in existing_label_names]
 
             # Convert the labels to the new label names
             dataset = dataset.map(
-                lambda example: {
-                    "labels": label_mapping[example["labels"]],
-                },
+                lambda example: {"labels": label_mapping[example["labels"]]}
             )
 
             # Change the label names
-            dataset.features["labels"] = ClassLabel(
-                num_classes=3,
-                names=label_names,
-            )
+            dataset.features["labels"] = ClassLabel(num_classes=3, names=label_names)
 
             # Shuffle the dataset
             dataset = dataset.shuffle(seed=seed)
@@ -266,14 +255,16 @@ def build_danfever_with_splits(config: DictConfig) -> None:
     """Creates dataset splits for the DanFEVER dataset and stores them to disk.
 
     Args:
-        config (DictConfig):
+        config:
             Hydra configuration object.
     """
     # Load the DanFEVER dataset
     dataset = load_dataset("strombergnlp/danfever", split="train")
+    assert isinstance(dataset, Dataset)
 
     # Convert the dataset to a Pandas DataFrame
     df = dataset.to_pandas()
+    assert isinstance(df, pd.DataFrame)
 
     # Get list unique `evidence_extract` values, along with their counts
     evidence_extract_counts = df.evidence_extract.value_counts()
@@ -300,16 +291,13 @@ def build_danfever_with_splits(config: DictConfig) -> None:
 
     # Convert the dataframes back to datasets
     train_dataset = Dataset.from_pandas(
-        df[df.evidence_extract.isin(train_evidence_extract)],
-        preserve_index=False,
+        df[df.evidence_extract.isin(train_evidence_extract)], preserve_index=False
     )
     val_dataset = Dataset.from_pandas(
-        df[df.evidence_extract.isin(val_evidence_extract)],
-        preserve_index=False,
+        df[df.evidence_extract.isin(val_evidence_extract)], preserve_index=False
     )
     test_dataset = Dataset.from_pandas(
-        df[df.evidence_extract.isin(test_evidence_extract)],
-        preserve_index=False,
+        df[df.evidence_extract.isin(test_evidence_extract)], preserve_index=False
     )
 
     # Package the datasets into a DatasetDict

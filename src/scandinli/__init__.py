@@ -1,6 +1,4 @@
-"""
-.. include:: ../../README.md
-"""
+""".. include:: ../../README.md."""
 
 import pkg_resources
 

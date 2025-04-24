@@ -7,25 +7,25 @@ from pathlib import Path
 from typing import Tuple
 
 
-def bump_major():
+def bump_major() -> None:
     """Add one to the major version."""
     major, _, _ = get_current_version()
     set_new_version(major + 1, 0, 0)
 
 
-def bump_minor():
+def bump_minor() -> None:
     """Add one to the minor version."""
     major, minor, _ = get_current_version()
     set_new_version(major, minor + 1, 0)
 
 
-def bump_patch():
+def bump_patch() -> None:
     """Add one to the patch version."""
     major, minor, patch = get_current_version()
     set_new_version(major, minor, patch + 1)
 
 
-def set_new_version(major: int, minor: int, patch: int):
+def set_new_version(major: int, minor: int, patch: int) -> None:
     """Sets a new version.
 
     Args:
@@ -55,10 +55,7 @@ def set_new_version(major: int, minor: int, patch: int):
     pyproject_path = Path("pyproject.toml")
     pyproject = pyproject_path.read_text()
     pyproject = re.sub(
-        r'version = "[^"]+"',
-        f'version = "{version}"',
-        pyproject,
-        count=1,
+        r'version = "[^"]+"', f'version = "{version}"', pyproject, count=1
     )
     pyproject_path.write_text(pyproject)
 

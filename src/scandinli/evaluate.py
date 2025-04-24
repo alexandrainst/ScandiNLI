@@ -36,7 +36,7 @@ def evaluate(config: DictConfig) -> None:
     """Evaluate finetuned NLI models on Danish, Swedish, and Norwegian NLI datasets.
 
     Args:
-        config (DictConfig):
+        config:
             Hydra config object.
     """
     # Get the model ID
@@ -68,7 +68,6 @@ def evaluate(config: DictConfig) -> None:
 
     # Iterate over the languages
     for language in config.evaluation.languages:
-
         # Build the test datasets
         test = build_dataset_for_single_language(
             dataset_configs=config.test_datasets[language],
@@ -80,8 +79,7 @@ def evaluate(config: DictConfig) -> None:
 
         # Tokenize the datasets
         tokenized_test = test.map(
-            partial(tokenize_function, tokenizer=tokenizer),
-            batched=True,
+            partial(tokenize_function, tokenizer=tokenizer), batched=True
         )
 
         # Define the data collator

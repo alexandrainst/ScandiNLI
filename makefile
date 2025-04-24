@@ -1,6 +1,6 @@
 # This ensures that we can call `make <target>` even if `<target>` exists as a file or
 # directory.
-.PHONY: notebook docs data train
+.PHONY: help docs
 
 # Exports all variables defined in the makefile available to scripts
 .EXPORT_ALL_VARIABLES:
@@ -17,122 +17,69 @@ include .env
 export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
 export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
 
-install-poetry:
-	@echo "Installing poetry..."
-	@pipx install poetry==1.2.0
-	@$(eval include ${HOME}/.poetry/env)
+# Set the PATH env var used by cargo and uv
+export PATH := ${HOME}/.local/bin:${HOME}/.cargo/bin:$(PATH)
 
-uninstall-poetry:
-	@echo "Uninstalling poetry..."
-	@pipx uninstall poetry
+# Set the shell to bash, enabling the use of `source` statements
+SHELL := /bin/bash
 
-install:
-	@echo "Installing..."
-	@if [ "$(shell which poetry)" = "" ]; then \
-		$(MAKE) install-poetry; \
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' makefile | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+install: ## Install dependencies
+	@echo "Installing the 'ScandiNLI' project..."
+	@$(MAKE) --quiet install-rust
+	@$(MAKE) --quiet install-uv
+	@$(MAKE) --quiet install-dependencies
+	@$(MAKE) --quiet setup-environment-variables
+	@$(MAKE) --quiet install-pre-commit
+	@echo "Installed the 'ScandiNLI' project."
+
+install-rust:
+	@if [ "$(shell which rustup)" = "" ]; then \
+		curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y; \
+		echo "Installed Rust."; \
 	fi
-	@if [ "$(shell which gpg)" = "" ]; then \
-		echo "GPG not installed, so an error will occur. Install GPG on MacOS with "\
-			 "`brew install gnupg` or on Ubuntu with `apt install gnupg` and run "\
-			 "`make install` again."; \
-	fi
-	@$(MAKE) setup-poetry
-	@$(MAKE) setup-environment-variables
-	@$(MAKE) setup-git
 
-setup-poetry:
-	@poetry env use python3 && poetry install
+install-uv:
+	@if [ "$(shell which uv)" = "" ]; then \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+        echo "Installed uv."; \
+    else \
+		echo "Updating uv..."; \
+		uv self update; \
+	fi
+
+install-dependencies:
+	@uv python install 3.11
+	@uv sync --all-extras --python 3.11
+	@if [ "${NO_FLASH_ATTN}" != "1" ] && [ $$(uname) != "Darwin" ]; then \
+		uv pip install --no-build-isolation flash-attn>=2.7.0.post2; \
+	fi
 
 setup-environment-variables:
-	@poetry run python3 -m src.scripts.fix_dot_env_file
+	@uv run python src/scripts/fix_dot_env_file.py
 
-setup-git:
-	@git init
-	@git config --local user.name ${GIT_NAME}
-	@git config --local user.email ${GIT_EMAIL}
-	@if [ ${GPG_KEY_ID} = "" ]; then \
-		echo "No GPG key ID specified. Skipping GPG signing."; \
-		git config --local commit.gpgsign false; \
-	else \
-		echo "Signing with GPG key ID ${GPG_KEY_ID}..."; \
-		echo 'If you get the "failed to sign the data" error when committing, try running `export GPG_TTY=$$(tty)`.'; \
-		git config --local commit.gpgsign true; \
-		git config --local user.signingkey ${GPG_KEY_ID}; \
-	fi
-	@poetry run pre-commit install
+setup-environment-variables-non-interactive:
+	@uv run python src/scripts/fix_dot_env_file.py --non-interactive
 
-docs:
-	@poetry run pdoc --docformat google src/scandinli -o docs
-	@echo "Saved documentation."
+install-pre-commit:
+	@uv run pre-commit install
+	@uv run pre-commit autoupdate
 
-view-docs:
-	@echo "Viewing API documentation..."
-	@uname=$$(uname); \
-		case $${uname} in \
-			(*Linux*) openCmd='xdg-open'; ;; \
-			(*Darwin*) openCmd='open'; ;; \
-			(*CYGWIN*) openCmd='cygstart'; ;; \
-			(*) echo 'Error: Unsupported platform: $${uname}'; exit 2; ;; \
-		esac; \
-		"$${openCmd}" docs/scandinli.html
+docs:  ## View documentation locally
+	@echo "Viewing documentation - run 'make publish-docs' to publish the documentation website."
+	@uv run mkdocs serve
 
-bump-major:
-	@poetry run python -m src.scripts.versioning --major
-	@echo "Bumped major version!"
+publish-docs:  ## Publish documentation to GitHub Pages
+	@uv run mkdocs gh-deploy
+	@echo "Updated documentation website: https://euroeval.com/"
 
-bump-minor:
-	@poetry run python -m src.scripts.versioning --minor
-	@echo "Bumped minor version!"
+test:  ## Run tests
+	@uv run pytest && uv run readme-cov
 
-bump-patch:
-	@poetry run python -m src.scripts.versioning --patch
-	@echo "Bumped patch version!"
+tree:  ## Print directory tree
+	@tree -a --gitignore -I .git .
 
-publish:
-	@if [ ${PYPI_API_TOKEN} = "" ]; then \
-		echo "No PyPI API token specified in the '.env' file, so cannot publish."; \
-	else \
-		echo "Publishing to PyPI..."; \
-		poetry publish --build --username "__token__" --password ${PYPI_API_TOKEN}; \
-	fi
-	@echo "Published!"
-
-publish-major: bump-major publish
-
-publish-minor: bump-minor publish
-
-publish-patch: bump-patch publish
-
-test:
-	@poetry run pytest && readme-cov
-
-tree:
-	@tree -a \
-		-I .git \
-		-I .mypy_cache \
-		-I .env \
-		-I .venv \
-		-I poetry.lock \
-		-I .ipynb_checkpoints \
-		-I dist \
-		-I .gitkeep \
-		-I docs \
-		-I .pytest_cache \
-		-I outputs \
-		-I .DS_Store \
-		-I .cache \
-		-I raw \
-		-I processed \
-		-I final \
-		-I models--* \
-		-I checkpoint-* \
-		-I .coverage* \
-		-I .DS_Store \
-		-I __pycache__ \
-		.
-
-data:
-	@poetry run python src/scripts/build_data.py
-
-train:
-	@poetry run python src/scripts/train.py
+check:  ## Lint, format, and type-check the code
+	@uv run pre-commit run --all-files

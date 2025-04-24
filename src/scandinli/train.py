@@ -3,14 +3,13 @@
 import logging
 from functools import partial
 from pathlib import Path
-from typing import Dict, Tuple
 
 import hydra
 import numpy as np
 import torch
 from datasets import disable_progress_bar
-from datasets.dataset_dict import DatasetDict
-from omegaconf import DictConfig
+from datasets.dataset_dict import Datasetdict
+from omegaconf import dictConfig
 from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
 from transformers import (
     AutoModelForSequenceClassification,
@@ -37,11 +36,11 @@ disable_progress_bar()
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
-def train(config: DictConfig) -> None:
+def train(config: dictConfig) -> None:
     """Train an NLI model on the built dataset.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
     """
     # Build the dataset
@@ -52,15 +51,14 @@ def train(config: DictConfig) -> None:
     model_dir = Path(config.dirs.models) / config.model.output_model_id
 
     # Load in the dataset dictionary
-    dataset = DatasetDict.load_from_disk(dataset_dir)
+    dataset = Datasetdict.load_from_disk(dataset_dir)
 
     # Load the model and tokenizer
     model, tokenizer = load_model_and_tokenizer(config)
 
     # Tokenize the dataset
     tokenized_dataset = dataset.map(
-        partial(tokenize_function, tokenizer=tokenizer),
-        batched=True,
+        partial(tokenize_function, tokenizer=tokenizer), batched=True
     )
 
     # Define the data collator
@@ -120,17 +118,16 @@ def train(config: DictConfig) -> None:
 
 
 def load_model_and_tokenizer(
-    config: DictConfig,
-) -> Tuple[PreTrainedModel, PreTrainedTokenizerBase]:
+    config: dictConfig,
+) -> tuple[PreTrainedModel, PreTrainedTokenizerBase]:
     """Load the model and tokenizer.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
 
     Returns:
-        Tuple[PreTrainedModel, PreTrainedTokenizerBase]:
-            The model and tokenizer.
+        The model and tokenizer.
     """
     # Define the model directory
     model_dir = Path(config.dirs.models) / config.model.output_model_id
@@ -146,9 +143,7 @@ def load_model_and_tokenizer(
 
     # Define the model
     model = AutoModelForSequenceClassification.from_pretrained(
-        config.model.input_model_id,
-        num_labels=3,
-        cache_dir=model_dir,
+        config.model.input_model_id, num_labels=3, cache_dir=model_dir
     )
 
     # Set the label names
@@ -165,14 +160,13 @@ def tokenize_function(
     """Tokenize the examples.
 
     Args:
-        examples (BatchEncoding):
+        examples:
             The examples to tokenize.
-        tokenizer (PreTrainedTokenizerBase):
+        tokenizer:
             The tokenizer to use.
 
     Returns:
-        BatchEncoding:
-            The tokenized examples.
+        The tokenized examples.
     """
     return tokenizer(
         examples["premise"],
@@ -182,16 +176,15 @@ def tokenize_function(
     )
 
 
-def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
+def compute_metrics(eval_pred: EvalPrediction) -> dict[str, float]:
     """Compute the metrics.
 
     Args:
-        eval_pred (EvalPrediction):
+        eval_pred:
             The predictions to evaluate.
 
     Returns:
-        Dict[str, float]:
-            The metrics.
+        The metrics.
     """
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
