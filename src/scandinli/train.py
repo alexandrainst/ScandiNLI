@@ -26,7 +26,7 @@ from transformers import (
 )
 from transformers.training_args import OptimizerNames
 
-from scandinli.build_data import build_data
+from .data import build_data
 
 # Ignore loggers from `datasets`
 logging.getLogger("datasets").setLevel(logging.ERROR)
