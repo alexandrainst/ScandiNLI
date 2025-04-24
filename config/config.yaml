@@ -8,7 +8,7 @@ use_wandb: True
 push_to_hub: True
 patience: 10
 learning_rate: 2e-5
-max_steps: 1_000_000
+max_steps: 50_000
 warmup_steps: 1_000
 logging_steps: 100
 eval_steps: 1_000
