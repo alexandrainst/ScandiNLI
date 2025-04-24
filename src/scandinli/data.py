@@ -235,8 +235,9 @@ def build_dataset_for_single_language(
             )
 
             # Change the label names
-            breakpoint()
-            dataset.features["labels"] = ClassLabel(num_classes=3, names=label_names)
+            features = dataset.features
+            features["labels"] = ClassLabel(num_classes=3, names=label_names)
+            dataset = dataset.cast(features)
 
             # Shuffle the dataset
             dataset = dataset.shuffle(seed=seed)
