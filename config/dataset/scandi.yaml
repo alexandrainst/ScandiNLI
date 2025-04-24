@@ -1,6 +1,6 @@
 train_datasets:
   da:
-    - id: data/processed/danfever
+    - id: data/danfever
       subset:
       split: train
       premise_column: evidence_extract

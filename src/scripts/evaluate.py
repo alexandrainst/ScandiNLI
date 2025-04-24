@@ -11,7 +11,7 @@ def main(config: DictConfig) -> None:
     """Trains an NLI model.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
     """
     evaluate(config)
