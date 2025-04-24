@@ -10,20 +10,15 @@ from datasets import disable_progress_bar
 from datasets.dataset_dict import DatasetDict
 from omegaconf import DictConfig
 from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
-from transformers import (
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    BatchEncoding,
-    DataCollatorWithPadding,
-    EarlyStoppingCallback,
-    EvalPrediction,
-    IntervalStrategy,
-    PreTrainedModel,
-    PreTrainedTokenizerBase,
-    Trainer,
-    TrainingArguments,
-)
-from transformers.training_args import OptimizerNames
+from transformers.data.data_collator import DataCollatorWithPadding
+from transformers.modeling_utils import PreTrainedModel
+from transformers.models.auto.modeling_auto import AutoModelForSequenceClassification
+from transformers.models.auto.tokenization_auto import AutoTokenizer
+from transformers.tokenization_utils_base import BatchEncoding, PreTrainedTokenizerBase
+from transformers.trainer import Trainer
+from transformers.trainer_callback import EarlyStoppingCallback
+from transformers.trainer_utils import EvalPrediction, IntervalStrategy
+from transformers.training_args import OptimizerNames, TrainingArguments
 
 from .data import build_data
 

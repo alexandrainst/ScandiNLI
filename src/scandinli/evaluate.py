@@ -9,15 +9,13 @@ import torch
 import transformers.utils.logging as hf_logging
 from datasets import disable_progress_bar
 from omegaconf import DictConfig
-from transformers import (
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    DataCollatorWithPadding,
-    Trainer,
-    TrainingArguments,
-)
+from transformers.data.data_collator import DataCollatorWithPadding
+from transformers.models.auto.modeling_auto import AutoModelForSequenceClassification
+from transformers.models.auto.tokenization_auto import AutoTokenizer
+from transformers.trainer import Trainer
+from transformers.training_args import TrainingArguments
 
-from .build_data import build_dataset_for_single_language
+from .data import build_dataset_for_single_language
 from .train import compute_metrics, tokenize_function
 
 # Ignore loggers from `datasets`
