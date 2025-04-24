@@ -1,13 +1,13 @@
 """Build an NLI dataset used for training."""
 
 import logging
+import os
 from pathlib import Path
 
 import hydra
 import pandas as pd
 from datasets import disable_progress_bar
 from datasets.arrow_dataset import Dataset
-from datasets.builder import DatasetGenerationError
 from datasets.combine import concatenate_datasets, interleave_datasets
 from datasets.dataset_dict import DatasetDict
 from datasets.features import ClassLabel
@@ -196,12 +196,12 @@ def build_dataset_for_single_language(
             pbar.set_description(log_str)
 
             # Load the dataset
-            try:
+            if os.path.exists(cfg.id):
+                dataset = DatasetDict.load_from_disk(cfg.id)[cfg.split]
+            else:
                 dataset = load_dataset(
                     cfg.id, cfg.subset, split=cfg.split, cache_dir=cache_dir
                 )
-            except DatasetGenerationError:
-                dataset = DatasetDict.load_from_disk(cfg.id)[cfg.split]
             assert isinstance(dataset, Dataset)
 
             # Rename the columns
