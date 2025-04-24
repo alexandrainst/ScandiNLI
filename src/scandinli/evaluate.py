@@ -5,7 +5,6 @@ import os
 from functools import partial
 from pathlib import Path
 
-import hydra
 import torch
 import transformers.utils.logging as hf_logging
 from datasets import disable_progress_bar
@@ -31,7 +30,6 @@ disable_progress_bar()
 logger = logging.getLogger(__name__)
 
 
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
 def evaluate(config: DictConfig) -> None:
     """Evaluate finetuned NLI models on Danish, Swedish, and Norwegian NLI datasets.
 

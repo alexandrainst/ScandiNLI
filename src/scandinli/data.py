@@ -4,7 +4,6 @@ import logging
 import os
 from pathlib import Path
 
-import hydra
 import pandas as pd
 from datasets import disable_progress_bar
 from datasets.arrow_dataset import Dataset
@@ -23,7 +22,6 @@ logging.getLogger("datasets").setLevel(logging.ERROR)
 disable_progress_bar()
 
 
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
 def build_data(config: DictConfig) -> None:
     """Build an NLI dataset with a training and validation split.
 
@@ -48,7 +46,6 @@ def build_data(config: DictConfig) -> None:
     dataset.save_to_disk(final_dir / "ScandiNLI")
 
 
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
 def build_training_data(config: DictConfig) -> Dataset:
     """Build an NLI dataset used for training.
 
@@ -103,7 +100,6 @@ def build_training_data(config: DictConfig) -> Dataset:
     return dataset
 
 
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
 def build_validation_data(config: DictConfig) -> Dataset:
     """Build a validation dataset for NLI evaluation.
 
@@ -252,7 +248,6 @@ def build_dataset_for_single_language(
     return dataset
 
 
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
 def build_danfever_with_splits(config: DictConfig) -> None:
     """Creates dataset splits for the DanFEVER dataset and stores them to disk.
 

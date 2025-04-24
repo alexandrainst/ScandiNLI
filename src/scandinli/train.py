@@ -4,7 +4,6 @@ import logging
 from functools import partial
 from pathlib import Path
 
-import hydra
 import numpy as np
 import torch
 from datasets import disable_progress_bar
@@ -35,7 +34,6 @@ logging.getLogger("datasets").setLevel(logging.ERROR)
 disable_progress_bar()
 
 
-@hydra.main(config_path="../../config", config_name="config", version_base=None)
 def train(config: DictConfig) -> None:
     """Train an NLI model on the built dataset.
 
