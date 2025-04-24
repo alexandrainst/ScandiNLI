@@ -1,1 +1,1 @@
-{% raw %}{% include-markdown "../README.md" %}{% endraw %}
+{% include-markdown "../README.md" %}
