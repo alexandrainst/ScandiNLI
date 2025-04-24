@@ -8,8 +8,8 @@ import hydra
 import numpy as np
 import torch
 from datasets import disable_progress_bar
-from datasets.dataset_dict import Datasetdict
-from omegaconf import dictConfig
+from datasets.dataset_dict import DatasetDict
+from omegaconf import DictConfig
 from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
 from transformers import (
     AutoModelForSequenceClassification,
@@ -36,7 +36,7 @@ disable_progress_bar()
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
-def train(config: dictConfig) -> None:
+def train(config: DictConfig) -> None:
     """Train an NLI model on the built dataset.
 
     Args:
@@ -51,7 +51,7 @@ def train(config: dictConfig) -> None:
     model_dir = Path(config.dirs.models) / config.model.output_model_id
 
     # Load in the dataset dictionary
-    dataset = Datasetdict.load_from_disk(dataset_dir)
+    dataset = DatasetDict.load_from_disk(dataset_dir)
 
     # Load the model and tokenizer
     model, tokenizer = load_model_and_tokenizer(config)
@@ -119,7 +119,7 @@ def train(config: dictConfig) -> None:
 
 
 def load_model_and_tokenizer(
-    config: dictConfig,
+    config: DictConfig,
 ) -> tuple[PreTrainedModel, PreTrainedTokenizerBase]:
     """Load the model and tokenizer.
 
