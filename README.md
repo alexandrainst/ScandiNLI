@@ -16,74 +16,38 @@ Developers:
 
 ## Setup
 
-### Set up the environment
+### Installation
 
-1. Run `make install`, which installs Poetry (if it isn't already installed), sets up a virtual environment and all Python dependencies therein.
+1. Run `make install`, which sets up a virtual environment and all Python dependencies therein.
 2. Run `source .venv/bin/activate` to activate the virtual environment.
 
-### Install new packages
+
+### Adding and Removing Packages
 
 To install new PyPI packages, run:
-
 ```
-$ poetry add <package-name>
-```
-
-### Auto-generate API documentation
-
-To auto-generate API document for your project, run:
-
-```
-$ make docs
+uv add <package-name>
 ```
 
-To view the documentation, run:
+To remove them again, run:
+```
+uv remove <package-name>
+```
 
+To show all installed packages, run:
 ```
-$ make view-docs
+uv pip list
 ```
 
-## Tools used in this project
-* [Poetry](https://towardsdatascience.com/how-to-effortlessly-publish-your-python-package-to-pypi-using-poetry-44b305362f9f): Dependency management
-* [hydra](https://hydra.cc/): Manage configuration files
-* [pre-commit plugins](https://pre-commit.com/): Automate code reviewing formatting
-* [pdoc](https://github.com/pdoc3/pdoc): Automatically create an API documentation for your project
 
-## Project structure
-```
-.
-├── .flake8
-├── .github
-│   └── workflows
-│       ├── ci.yaml
-│       └── docs.yaml
-├── .gitignore
-├── .pre-commit-config.yaml
-├── CHANGELOG.md
-├── LICENSE
-├── README.md
-├── config
-│   ├── __init__.py
-│   └── config.yaml
-├── data
-├── makefile
-├── models
-├── notebooks
-├── poetry.toml
-├── pyproject.toml
-├── src
-│   ├── scandinli
-│   │   ├── __init__.py
-│   │   ├── build_data.py
-│   │   └── train.py
-│   └── scripts
-│       ├── build_data.py
-│       ├── fix_dot_env_file.py
-│       ├── train.py
-│       └── versioning.py
-└── tests
-    ├── __init__.py
-    ├── conftest.py
-    ├── test_build_data.py
-    └── test_train.py
-```
+## All Built-in Commands
+
+The project includes the following convenience commands:
+
+- `make install`: Install the project and its dependencies in a virtual environment.
+- `make install-pre-commit`: Install pre-commit hooks for linting, formatting and type checking.
+- `make check`: Lint and format the code using `ruff`, and type check the code using `mypy`.
+- `make test`: Run tests using `pytest` and update the coverage badge in the readme.
+- `make docs`: View documentation locally in a browser.
+- `make publish-docs`: Publish documentation to GitHub Pages.
+- `make tree`: Show the project structure as a tree.
