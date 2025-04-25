@@ -179,7 +179,6 @@ def evaluate_litellm(config: DictConfig) -> None:
             PROMPT.format(language=language, premise=premise, hypothesis=hypothesis)
             for premise, hypothesis in zip(test["premise"], test["hypothesis"])
         ]
-        labels = test["labels"]
 
         # Get the generations from the model
         responses = [
@@ -199,8 +198,8 @@ def evaluate_litellm(config: DictConfig) -> None:
             if isinstance(response, ModelResponse)
         ]
 
-        # Extract the labels
-        label_names = ["entailment", "contradiction", "neutral"]
+        # Extract the predictions
+        label_names = test.features["labels"].names
         distances = [
             [levenshtein_distance(s1=response, s2=label) for label in label_names]
             for response in responses
@@ -209,6 +208,9 @@ def evaluate_litellm(config: DictConfig) -> None:
             label_names[min(range(len(distance_list)), key=distance_list.__getitem__)]
             for distance_list in distances
         ]
+
+        # Extract the ground truth labels
+        labels = [label_names[label_idx] for label_idx in test["labels"]]
 
         # Compute the metrics
         mcc = matthews_corrcoef(y_true=labels, y_pred=predictions)
