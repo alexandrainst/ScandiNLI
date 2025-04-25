@@ -30,7 +30,9 @@ def build_data(config: DictConfig) -> None:
             The Hydra configuration.
     """
     # Define data directory
-    final_dir = Path(config.dirs.data) / config.dirs.final
+    final_path = Path(config.dirs.data) / config.dirs.final / "ScandiNLI"
+    if final_path.exists():
+        return
 
     # Build the DanFever dataset
     build_danfever_with_splits(config)
@@ -43,7 +45,7 @@ def build_data(config: DictConfig) -> None:
     dataset = DatasetDict(dict(train=train, val=val))
 
     # Store the dataset
-    dataset.save_to_disk(final_dir / "ScandiNLI")
+    dataset.save_to_disk(final_path)
 
 
 def build_training_data(config: DictConfig) -> Dataset:
