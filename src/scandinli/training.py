@@ -20,8 +20,6 @@ from transformers.trainer_callback import EarlyStoppingCallback
 from transformers.trainer_utils import EvalPrediction, IntervalStrategy
 from transformers.training_args import OptimizerNames, TrainingArguments
 
-from .data import build_data
-
 # Ignore loggers from `datasets`
 logging.getLogger("datasets").setLevel(logging.ERROR)
 
@@ -36,9 +34,6 @@ def train(config: DictConfig) -> None:
         config:
             The Hydra configuration.
     """
-    # Build the dataset
-    build_data(config)
-
     # Define the path to the data and model
     dataset_dir = Path(config.dirs.data) / config.dirs.final / "ScandiNLI"
     model_dir = Path(config.dirs.models) / config.model.output_model_id

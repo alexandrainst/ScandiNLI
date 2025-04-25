@@ -11,7 +11,7 @@ def main(config: DictConfig) -> None:
     """Build an NLI dataset used for training.
 
     Args:
-        config (DictConfig):
+        config:
             The Hydra configuration.
     """
     build_data(config)

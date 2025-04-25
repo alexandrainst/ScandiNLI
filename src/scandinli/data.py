@@ -196,7 +196,11 @@ def build_dataset_for_single_language(
                 dataset = DatasetDict.load_from_disk(cfg.id)[cfg.split]
             else:
                 dataset = load_dataset(
-                    cfg.id, cfg.subset, split=cfg.split, cache_dir=cache_dir
+                    cfg.id,
+                    cfg.subset,
+                    split=cfg.split,
+                    cache_dir=cache_dir,
+                    trust_remote_code=True,
                 )
             assert isinstance(dataset, Dataset)
 
@@ -256,7 +260,9 @@ def build_danfever_with_splits(config: DictConfig) -> None:
             Hydra configuration object.
     """
     # Load the DanFEVER dataset
-    dataset = load_dataset("strombergnlp/danfever", split="train")
+    dataset = load_dataset(
+        "strombergnlp/danfever", split="train", trust_remote_code=True
+    )
     assert isinstance(dataset, Dataset)
 
     # Convert the dataset to a Pandas DataFrame

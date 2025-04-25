@@ -1,14 +1,19 @@
 """Evaluate finetuned NLI models on Danish, Swedish, and Norwegian NLI datasets."""
 
+import asyncio
 import logging
 import os
 from functools import partial
 from pathlib import Path
 
+import litellm
 import torch
 import transformers.utils.logging as hf_logging
 from datasets import disable_progress_bar
+from Levenshtein import distance as levenshtein_distance
+from litellm.types.utils import ModelResponse
 from omegaconf import DictConfig
+from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
 from transformers.data.data_collator import DataCollatorWithPadding
 from transformers.models.auto.modeling_auto import AutoModelForSequenceClassification
 from transformers.models.auto.tokenization_auto import AutoTokenizer
@@ -16,7 +21,7 @@ from transformers.trainer import Trainer
 from transformers.training_args import TrainingArguments
 
 from .data import build_dataset_for_single_language
-from .train import compute_metrics, tokenize_function
+from .training import compute_metrics, tokenize_function
 
 # Ignore loggers from `datasets`
 logging.getLogger("datasets").setLevel(logging.ERROR)
@@ -28,7 +33,26 @@ disable_progress_bar()
 logger = logging.getLogger(__name__)
 
 
-def evaluate(config: DictConfig) -> None:
+PROMPT = """
+    Here is a premise in {language}:
+
+    <premise>
+    {premise}
+    </premise>
+
+    Here is a hypothesis concerning the premise:
+
+    <hypothesis>
+    {hypothesis}
+    </hypothesis>
+
+    Determine whether the hypothesis is implied by the premise (entailment), contradicts
+    the premise (contradiction), or is neither (neutral). Answer with "entailment",
+    "contradiction", or "neutral", and nothing else.
+"""
+
+
+def evaluate_encoder(config: DictConfig) -> None:
     """Evaluate finetuned NLI models on Danish, Swedish, and Norwegian NLI datasets.
 
     Args:
@@ -115,6 +139,75 @@ def evaluate(config: DictConfig) -> None:
         macro_f1 = metrics["eval_macro_f1"]
 
         # Log
+        logger.info(
+            f"=== SCORES FOR {language.upper()} ===\n"
+            f"MCC: {mcc}\n"
+            f"Accuracy: {accuracy}\n"
+            f"Macro F1: {macro_f1}"
+        )
+
+
+async def evaluate_litellm(config: DictConfig) -> None:
+    """Evaluate LiteLLM API model on Danish, Swedish, and Norwegian NLI datasets.
+
+    Args:
+        config:
+            Hydra config object.
+    """
+    if config.evaluation.model_id is None:
+        raise ValueError(
+            "The `evaluation.model_id` must be set for evaluating LiteLLM models."
+        )
+    model_id = config.evaluation.model_id
+
+    raw_dir = Path(config.dirs.data) / config.dirs.raw
+    for language in config.evaluation.languages:
+        # Build the prompts
+        test = build_dataset_for_single_language(
+            dataset_configs=config.test_datasets[language],
+            cache_dir=raw_dir,
+            seed=config.seed,
+            progress_bar=False,
+        )
+        prompts = [
+            PROMPT.format(language=language, premise=premise, hypothesis=hypothesis)
+            for premise, hypothesis in zip(test["premise"], test["hypothesis"])
+        ]
+        labels = test["labels"]
+
+        # Get the generations from the model
+        requests = [
+            litellm.acompletion(
+                model=model_id,
+                messages=[dict(role="user", content=prompt)],
+                temperature=0.0,
+                max_tokens=5,
+            )
+            for prompt in prompts
+        ]
+        responses = await asyncio.gather(*requests)
+        responses = [
+            response["choices"][0]["message"]["content"]
+            for response in responses
+            if isinstance(response, ModelResponse)
+        ]
+
+        # Extract the labels
+        label_names = ["entailment", "contradiction", "neutral"]
+        distances = [
+            [levenshtein_distance(s1=response, s2=label) for label in label_names]
+            for response in responses
+        ]
+        predictions = [
+            label_names[min(range(len(distance_list)), key=distance_list.__getitem__)]
+            for distance_list in distances
+        ]
+
+        # Compute the metrics
+        mcc = matthews_corrcoef(y_true=labels, y_pred=predictions)
+        accuracy = accuracy_score(y_true=labels, y_pred=predictions)
+        macro_f1 = f1_score(y_true=labels, y_pred=predictions, average="macro")
+
         logger.info(
             f"=== SCORES FOR {language.upper()} ===\n"
             f"MCC: {mcc}\n"

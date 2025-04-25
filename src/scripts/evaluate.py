@@ -1,20 +1,24 @@
 """Script evaluates an NLI model."""
 
+import asyncio
+
 import hydra
 from omegaconf import DictConfig
 
-from scandinli.evaluate import evaluate
+from scandinli.data import build_data
+from scandinli.evaluation import evaluate_litellm
 
 
 @hydra.main(config_path="../../config", config_name="config", version_base=None)
 def main(config: DictConfig) -> None:
-    """Trains an NLI model.
+    """Evaluates an NLI model.
 
     Args:
         config:
             The Hydra configuration.
     """
-    evaluate(config)
+    build_data(config=config)
+    asyncio.run(evaluate_litellm(config=config))
 
 
 if __name__ == "__main__":
