@@ -154,6 +154,10 @@ async def evaluate_litellm(config: DictConfig) -> None:
         config:
             Hydra config object.
     """
+    # Disable `litellm` logging
+    logging.getLogger("LiteLLM").setLevel(logging.CRITICAL)
+    litellm.suppress_debug_info = True
+
     if config.evaluation.model_id is None:
         raise ValueError(
             "The `evaluation.model_id` must be set for evaluating LiteLLM models."
