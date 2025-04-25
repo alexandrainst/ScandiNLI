@@ -1,7 +1,5 @@
 """Script evaluates an NLI model."""
 
-import asyncio
-
 import hydra
 from dotenv import load_dotenv
 from omegaconf import DictConfig
@@ -21,7 +19,7 @@ def main(config: DictConfig) -> None:
             The Hydra configuration.
     """
     build_data(config=config)
-    asyncio.run(evaluate_litellm(config=config))
+    evaluate_litellm(config=config)
 
 
 if __name__ == "__main__":

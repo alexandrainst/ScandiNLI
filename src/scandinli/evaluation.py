@@ -1,6 +1,5 @@
 """Evaluate finetuned NLI models on Danish, Swedish, and Norwegian NLI datasets."""
 
-import asyncio
 import logging
 import os
 from functools import partial
@@ -14,6 +13,7 @@ from Levenshtein import distance as levenshtein_distance
 from litellm.types.utils import ModelResponse
 from omegaconf import DictConfig
 from sklearn.metrics import accuracy_score, f1_score, matthews_corrcoef
+from tqdm.auto import tqdm
 from transformers.data.data_collator import DataCollatorWithPadding
 from transformers.models.auto.modeling_auto import AutoModelForSequenceClassification
 from transformers.models.auto.tokenization_auto import AutoTokenizer
@@ -147,7 +147,7 @@ def evaluate_encoder(config: DictConfig) -> None:
         )
 
 
-async def evaluate_litellm(config: DictConfig) -> None:
+def evaluate_litellm(config: DictConfig) -> None:
     """Evaluate LiteLLM API model on Danish, Swedish, and Norwegian NLI datasets.
 
     Args:
@@ -156,6 +156,8 @@ async def evaluate_litellm(config: DictConfig) -> None:
     """
     # Disable `litellm` logging
     logging.getLogger("LiteLLM").setLevel(logging.CRITICAL)
+    logging.getLogger("httpx").setLevel(logging.CRITICAL)
+    logging.getLogger("openai").setLevel(logging.CRITICAL)
     litellm.suppress_debug_info = True
 
     if config.evaluation.model_id is None:
@@ -180,16 +182,17 @@ async def evaluate_litellm(config: DictConfig) -> None:
         labels = test["labels"]
 
         # Get the generations from the model
-        requests = [
-            litellm.acompletion(
+        responses = [
+            litellm.completion_with_retries(
                 model=model_id,
                 messages=[dict(role="user", content=prompt)],
                 temperature=0.0,
                 max_tokens=5,
             )
-            for prompt in prompts
+            for prompt in tqdm(
+                iterable=prompts, desc=f"Evaluating {language.upper()}", unit="prompt"
+            )
         ]
-        responses = await asyncio.gather(*requests)
         responses = [
             response["choices"][0]["message"]["content"]
             for response in responses
